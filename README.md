@@ -82,3 +82,4 @@ Global white-label expectations:
 - **Navigation:** Role menus live in `resources/js/PageRegistry/nav.ts` and feed `WorkspaceLayout` to keep the UI consistent.
 - **Docs:** Update this README whenever you add roles/pages so product + engineering share one source of truth.
 # GlintLabs
+# GlintLabs
