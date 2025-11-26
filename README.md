@@ -81,3 +81,4 @@ Global white-label expectations:
 - **Contexts:** Pass IDs through the `context` prop (e.g., `jobId`, `tenantId`) so blueprint sections can surface dynamic text via the shared formatter.
 - **Navigation:** Role menus live in `resources/js/PageRegistry/nav.ts` and feed `WorkspaceLayout` to keep the UI consistent.
 - **Docs:** Update this README whenever you add roles/pages so product + engineering share one source of truth.
+# GlintLabs
