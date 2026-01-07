@@ -8,7 +8,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div :class="[$page?.props?.auth?.user ? 'container-fluid px-3' : 'container']">
         <a class="navbar-brand" href="/">
-          <img :src="whiteLogo" alt="Glint Labs" />
+          <img :src="whiteLogo" alt="Lux Tanning" />
         </a>
         <button class="burger" :class="{ open: drawerOpen }" @click="toggleDrawer" aria-label="Toggle menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -39,15 +39,14 @@
               </template>
             </template>
             <template v-else>
-              <li class="nav-item"><a class="nav-link" href="/#customise">Customise</a></li>
-              <li class="nav-item"><a class="nav-link" href="/#features">Features</a></li>
-              <li class="nav-item"><a class="nav-link" href="/#screens">Screens</a></li>
-              <li class="nav-item"><a class="nav-link" href="/pricing">Pricing</a></li>
-              <li class="nav-item"><a class="nav-link" href="/#faq">FAQ</a></li>
+              <li class="nav-item"><a class="nav-link" href="/courses">Courses</a></li>
+              <li class="nav-item"><a class="nav-link" href="/locations">Studios</a></li>
+              <li class="nav-item"><a class="nav-link" href="/membership">Membership</a></li>
+              <li class="nav-item"><a class="nav-link" href="/#technology">Technology</a></li>
+              <li class="nav-item"><a class="nav-link" href="/status">Status</a></li>
               <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-              <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
               <li class="nav-item ms-lg-3">
-                <a class="btn btn-ghost btn-sm" href="/#contact"><i class="bi bi-chat-dots me-1"></i>Talk to us</a>
+                <a class="btn btn-ghost btn-sm" href="/book"><i class="bi bi-lightning-charge me-1"></i>Book a sun bed</a>
               </li>
             </template>
           </ul>
@@ -60,7 +59,7 @@
     <aside class="drawer" :class="{ open: drawerOpen }" @keydown.esc="toggleDrawer(false)" tabindex="-1">
       <div class="drawer-header d-flex align-items-center justify-content-between">
         <a href="/" class="d-inline-flex align-items-center text-decoration-none">
-          <img :src="whiteLogo" alt="Glint Labs" />
+          <img :src="whiteLogo" alt="Lux Tanning" />
         </a>
         <button class="burger small open" @click="toggleDrawer(false)" aria-label="Close menu"><span></span><span></span><span></span></button>
       </div>
@@ -83,16 +82,15 @@
             <button class="drawer-link btn-link" @click.prevent="logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
           </template>
         </template>
-        <template v-else>
-          <a href="/#customise" class="drawer-link">Customise</a>
-          <a href="/#features" class="drawer-link">Features</a>
-          <a href="/#screens" class="drawer-link">Screens</a>
-          <a href="/pricing" class="drawer-link">Pricing</a>
-          <a href="/#faq" class="drawer-link">FAQ</a>
-          <a href="/login" class="drawer-link">Login</a>
-          <a href="/register" class="drawer-link">Register</a>
-          <a href="/#contact" class="drawer-cta">Talk to us</a>
-        </template>
+          <template v-else>
+            <a href="/courses" class="drawer-link">Courses</a>
+            <a href="/locations" class="drawer-link">Studios</a>
+            <a href="/membership" class="drawer-link">Membership</a>
+            <a href="/#technology" class="drawer-link">Technology</a>
+            <a href="/status" class="drawer-link">Status</a>
+            <a href="/login" class="drawer-link">Login</a>
+            <a href="/book" class="drawer-cta">Book a sun bed</a>
+          </template>
       </nav>
     </aside>
 
@@ -169,13 +167,13 @@
       <div :class="[$page?.props?.auth?.user ? 'container-fluid px-3' : 'container']">
         <div class="row align-items-center gy-3">
           <div class="col-md-4 text-center text-md-start">
-            <img :src="whiteLogo" alt="Glint Labs" class="mb-2" />
-            <div class="small">© 2025 Glint Labs Ltd. All rights reserved.</div>
+            <img :src="whiteLogo" alt="Lux Tanning" class="mb-2" />
+            <div class="small">© 2025 Lux Tanning Studios Ltd.</div>
           </div>
           <div class="col-md-4 text-center">
-            <a href="/privacy-ploicy" class="me-3">Privacy</a>
+            <a href="/privacy" class="me-3">Privacy</a>
             <a href="/terms" class="me-3">Terms</a>
-            <a href="#">Status</a>
+            <a href="/status">Status</a>
           </div>
           <div class="col-md-4 text-center text-md-end">
             <a class="me-2" aria-label="Twitter" href="#"><i class="bi bi-twitter"></i></a>
@@ -196,7 +194,7 @@ export default {
   components: { Head },
   data() {
     return {
-      whiteLogo: 'https://cdn.shopify.com/s/files/1/0820/3947/2469/files/glint-favicon-black.jpg?v=1762130152',
+      whiteLogo: '/images/lux-logo.png',
       drawerOpen: false
     }
   },

@@ -1,9 +1,9 @@
 export const pageRegistry = {}
 
 const hostBases = {
-  tenant: 'https://{tenant}.glintlabs.com',
-  marketing: 'https://www.glintlabs.com',
-  glint: 'https://admin.glintlabs.com',
+  tenant: 'https://{studio}.luxtan.app',
+  marketing: 'https://luxtanning.com',
+  glint: 'https://hq.luxtan.app',
 }
 
 const tenantRoles = new Set(['customer', 'cleaner', 'manager', 'owner', 'accountant', 'support', 'shared'])
@@ -24,7 +24,7 @@ const defaultBrandingForHost = (host, spec) => {
     return {
       type: 'tenant',
       baseUrl: hostBases.tenant,
-      slugPlaceholder: '{tenant}',
+      slugPlaceholder: '{studio}',
       marketingLink: true,
       showBackLink: spec.role === 'customer' || spec.tenantFacing === true,
       poweredBy: true,

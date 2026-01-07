@@ -38,4 +38,11 @@ return [
         'maps_key' => env('GOOGLE_MAPS_API_KEY'),
     ],
 
+    'luma_chatbot' => [
+        'url' => env('CHATBOT_API_BASE', 'http://localhost:8001'),
+        'bot_name' => env('BOT_NAME', 'LUMA'),
+        'shop_name' => env('SHOP_NAME', 'Luma Wellness'),
+        'shop_town' => env('SHOP_TOWN', 'London'),
+    ],
+
 ];

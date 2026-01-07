@@ -9,23 +9,23 @@ const authPages = [
     role: 'public',
     tenantFacing: true,
     badge: 'Passwordless entry',
-    title: 'Send yourself a secure magic link via email or SMS.',
-    description: 'Handles guest, customer, cleaner, and owner login flows. Enforces rate limits and device posture checks before issuing tokens.',
+    title: 'Send yourself a Lux login link via SMS or email.',
+    description: 'Customers, Glow Guides, and owners authenticate with branded magic links that already know their studio + role.',
     sections: [
-      summary('auth-magic-link-metrics', 'Delivery health', [
-        { label: 'Links sent (24h)', value: '4,102', delta: '0.2% failure rate' },
-        { label: 'OTP fallback', value: '531', delta: 'When magic links expire' },
-        { label: 'Abuse blocks', value: '32', delta: 'Auto throttled' },
+      summary('auth-magic-stats', 'Delivery health', [
+        { label: 'Links this week', value: '12,482', delta: '0.3% failures' },
+        { label: 'SMS vs email', value: '64 / 36%', delta: 'auto-picks preferred channel' },
+        { label: 'Abuse throttles', value: '48 blocks', delta: 'device posture checks' },
       ]),
-      checklist('auth-magic-link-steps', 'Flow checklist', [
-        { label: 'Collect identifier', detail: 'Email or phone; auto-detects tenants if multiple memberships exist.' },
-        { label: 'Decide channel', detail: 'Prefers last successful channel; fallback to OTP if repeated failures.' },
-        { label: 'Send + confirm', detail: 'Links carry tenant + role context, expire in 15 minutes, and force device binding.' },
+      checklist('auth-magic-flow', 'Flow checklist', [
+        { label: 'Identify guest', detail: 'Email, phone, or membership ID — Lux maps to the right tenant automatically.' },
+        { label: 'Choose channel', detail: 'Prefers the last successful channel; falls back to OTP if inbox looks risky.' },
+        { label: 'Brand the invite', detail: 'Logo, color, and studio nickname render in the link so guests trust it immediately.' },
       ]),
-      insights('auth-magic-link-ux', 'CX details', [
-        { title: 'Tenant picker', description: 'If the identifier belongs to multiple companies, present a branded picker before sending the link.' },
-        { title: 'Session memory', description: 'Remember trusted devices and show the most recent login so staff can jump back in.' },
-        { title: 'Accessibility', description: 'Keyboard-friendly layout with copy-to-clipboard button for OTP fallback codes.' },
+      insights('auth-magic-ux', 'Experience polish', [
+        { title: 'Minutes preview', description: 'Customers see their remaining minutes before even tapping the link.' },
+        { title: 'Studio switcher', description: 'Staff who work across studios pick the right location before logging in.' },
+        { title: 'Invite capture', description: 'Owners can send invites to new staff directly from this form.' },
       ]),
     ],
   },
@@ -36,23 +36,23 @@ const authPages = [
     role: 'public',
     tenantFacing: true,
     badge: 'Token verification',
-    title: 'Verify the token, pick a tenant, and route to the right workspace.',
-    description: 'After the user clicks a magic link or enters an OTP, this page confirms device fingerprint, handles tenant selection, and finalises login.',
+    title: 'Confirm the device, pick a studio, and step into the right workspace.',
+    description: 'Every verification re-checks exposure permissions, membership tiers, and staff policies before dropping you into Lux OS.',
     sections: [
-      timeline('auth-verify-timeline', 'Verification sequence', [
-        { title: 'Token validation', time: 't=0s', detail: 'Check signature, expiry, and replay status.', state: 'info' },
-        { title: 'Tenant selection', time: 't=1s', detail: 'Show available companies, highlight most recent, and warn if access revoked.', state: 'warning' },
-        { title: 'Session creation', time: 't=2s', detail: 'Issue Sanctum session, set role, enforce MFA if required.', state: 'success' },
+      timeline('auth-verify-seq', 'Verification sequence', [
+        { title: 'Token validation', time: 't = 0s', detail: 'Signature + expiry check plus replay guard.', state: 'info' },
+        { title: 'Studio selection', time: 't = 1s', detail: 'Show linked studios with occupancy + incidents so staff know where they are landing.', state: 'warning' },
+        { title: 'Session creation', time: 't = 2s', detail: 'Issue Sanctum + PWA tokens, enforce MFA for finance + owner roles.', state: 'success' },
       ]),
-      summary('auth-verify-security', 'Security signals', [
-        { label: 'Device match', value: '96%', delta: 'pinned via UA + IP + key' },
-        { label: 'MFA required', value: 'Owner + Glint', delta: 'optional for staff' },
-        { label: 'Auto-expire', value: '15 mins', delta: 'unused links purge' },
+      summary('auth-verify-signal', 'Signals captured', [
+        { label: 'Device match', value: '96%', delta: 'passkeys + UA fingerprint' },
+        { label: 'MFA coverage', value: 'Owners + finance', delta: 'cleaners optional' },
+        { label: 'Link expiry', value: '15 minutes', delta: 'auto purge unused links' },
       ]),
-      insights('auth-verify-ux', 'Experience polish', [
-        { title: 'Inline incident banners', description: 'If status page shows auth incident, surface banner before verifying to set expectations.' },
-        { title: 'Device handoff', description: 'Offer QR code for continuing login on another device for cleaners on shared phones.' },
-        { title: 'Tenant avatars', description: 'Owners see branded logos and subdomains so they know exactly which workspace they are entering.' },
+      insights('auth-verify-cx', 'Guest-friendly touches', [
+        { title: 'Switch device', description: 'QR handoff lets guests log in on kiosk while requesting from their phone.' },
+        { title: 'Incident banner', description: 'If a studio has lamp maintenance, that context shows before login completes.' },
+        { title: 'Session timer', description: 'Staff see how long until auto-logout based on their role policy.' },
       ]),
     ],
   },

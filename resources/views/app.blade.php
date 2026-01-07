@@ -17,8 +17,11 @@
       :root { --glint-black: #000; --glint-white: #fff; --nav-h: 70px; }
       body { margin:0; padding-top: var(--banner-offset, 0); transition: padding-top .2s ease; }
     </style>
+    <script>
+        window.__LUMA_CHATBOT = @json(config('services.luma_chatbot'));
+    </script>
     {{-- Title intentionally omitted for troubleshooting white screen issue --}}
-    <link rel="icon" type="image/jpeg" href="https://cdn.shopify.com/s/files/1/0820/3947/2469/files/glint-favicon-black.jpg?v=1762130152" />
+    <link rel="icon" type="image/png" href="/assets/luxtanning-logo-favicon.png" />
     <script data-cfasync="false" defer src="{{ mix('js/app.js') }}"></script>
 </head>
 <body>

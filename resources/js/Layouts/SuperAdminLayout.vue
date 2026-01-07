@@ -3,7 +3,7 @@
     <Head />
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container-fluid px-3">
-        <a class="navbar-brand" href="/hub">Glint Hub</a>
+        <a class="navbar-brand" href="/hub">Lux Platform Hub</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#hubnav"><span class="navbar-toggler-icon"></span></button>
         <div id="hubnav" class="collapse navbar-collapse justify-content-end">
           <ul class="navbar-nav">

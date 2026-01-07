@@ -120,7 +120,7 @@ const props = defineProps({
   nav: { type: Object, default: null },
 })
 
-const FALLBACK_LOGO = 'https://cdn.shopify.com/s/files/1/0820/3947/2469/files/glint-favicon-black.jpg?v=1762130152'
+const FALLBACK_LOGO = '/images/lux-logo.png'
 const PLATFORM_LOGO = FALLBACK_LOGO
 
 const hexToRgba = (hex, alpha = 0.25) => {
@@ -151,24 +151,24 @@ const extractHost = url => {
 }
 
 const roleNames = {
-  customer: 'Customer portal',
-  cleaner: 'Cleaner route',
-  manager: 'Manager console',
-  owner: 'Company owner',
+  customer: 'Member portal',
+  cleaner: 'Studio floor',
+  manager: 'Studio operations',
+  owner: 'Portfolio HQ',
   accountant: 'Finance suite',
-  support: 'Support desk',
+  support: 'Concierge desk',
   glint: 'Platform control',
   shared: 'Workspace',
 }
 
 const taglineMap = {
-  owner: 'Operate your entire company from one control room.',
-  manager: 'Dispatch, staff and finance all stay perfectly in-sync.',
-  cleaner: 'Your mobile route, navigation and payouts in one app.',
-  accountant: 'Granular payouts, fees, taxes and dispute workflows.',
-  support: 'Triage chats, calls and incidents without leaving the hub.',
-  glint: 'Platform-level tooling for multi-tenant orchestration.',
-  customer: 'Self-serve access to jobs, payments and notifications.',
+  owner: 'Track every studio, lamp, and membership from one control room.',
+  manager: 'Minutes, beds, campaigns, and staff all update in real time.',
+  cleaner: 'Shift board with lamp timers, playlists, and guest notes.',
+  accountant: 'Granular payouts, bundles, VAT, and dispute workflows.',
+  support: 'Concierge toolkit for guests + staff without tab fatigue.',
+  glint: 'Platform governance for every Lux tenant and studio.',
+  customer: 'Self-serve access to minutes, bookings, and Glow Guides.',
 }
 
 const themeMap = {
@@ -179,8 +179,8 @@ const themeMap = {
     text: '#0b1120',
     subtle: '#667085',
     border: 'rgba(15,23,42,.08)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FF8C43',
+    accentSoft: 'rgba(255,140,67,.22)',
     navText: 'rgba(255,255,255,.92)',
     navHover: 'rgba(255,255,255,.08)',
     sidebar: 'linear-gradient(180deg,#050a1a,#0f172a 60%,#1b1f3b)',
@@ -193,8 +193,8 @@ const themeMap = {
     text: '#0b1120',
     subtle: '#475467',
     border: 'rgba(84,56,255,.12)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FF4E68',
+    accentSoft: 'rgba(255,78,104,.2)',
     navText: 'rgba(255,255,255,.95)',
     navHover: 'rgba(255,255,255,.12)',
     sidebar: 'linear-gradient(180deg,#110732,#1f1462 60%,#2b1f7a)',
@@ -207,8 +207,8 @@ const themeMap = {
     text: '#0f172a',
     subtle: '#475467',
     border: 'rgba(79,70,229,.12)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FFBE3D',
+    accentSoft: 'rgba(255,190,61,.2)',
     navText: 'rgba(255,255,255,.92)',
     navHover: 'rgba(164,180,255,.15)',
     sidebar: 'linear-gradient(180deg,#0e153a,#1d2565 65%,#24307a)',
@@ -221,8 +221,8 @@ const themeMap = {
     text: '#0f172a',
     subtle: '#475467',
     border: 'rgba(250,204,21,.3)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FF8C43',
+    accentSoft: 'rgba(255,140,67,.25)',
     navText: 'rgba(255,255,255,.92)',
     navHover: 'rgba(255,255,255,.12)',
     sidebar: 'linear-gradient(180deg,#04120c,#0d2319 55%,#103025)',
@@ -235,8 +235,8 @@ const themeMap = {
     text: '#0f172a',
     subtle: '#475467',
     border: 'rgba(236,72,153,.18)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FF4E68',
+    accentSoft: 'rgba(255,78,104,.18)',
     navText: 'rgba(255,255,255,.92)',
     navHover: 'rgba(244,114,182,.18)',
     sidebar: 'linear-gradient(180deg,#2b0f26,#471334 70%,#5e1f44)',
@@ -249,8 +249,8 @@ const themeMap = {
     text: '#0f172a',
     subtle: '#475467',
     border: 'rgba(14,165,233,.2)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FFBE3D',
+    accentSoft: 'rgba(255,190,61,.18)',
     navText: 'rgba(255,255,255,.95)',
     navHover: 'rgba(56,189,248,.15)',
     sidebar: 'linear-gradient(180deg,#041c2c,#053752 65%,#064968)',
@@ -263,8 +263,8 @@ const themeMap = {
     text: '#0f172a',
     subtle: '#475467',
     border: 'rgba(249,115,22,.18)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FF4E68',
+    accentSoft: 'rgba(255,78,104,.2)',
     navText: 'rgba(255,255,255,.92)',
     navHover: 'rgba(251,146,60,.18)',
     sidebar: 'linear-gradient(180deg,#020304,#07211b 55%,#0d3f32 100%)',
@@ -277,8 +277,8 @@ const themeMap = {
     text: '#0f172a',
     subtle: '#0f766e',
     border: 'rgba(45,212,191,.25)',
-    accent: '#4FE1C1',
-    accentSoft: 'rgba(79,225,193,.25)',
+    accent: '#FF8C43',
+    accentSoft: 'rgba(255,140,67,.2)',
     navText: 'rgba(15,23,42,.95)',
     navHover: 'rgba(45,212,191,.15)',
     sidebar: 'linear-gradient(180deg,#022c22,#02463a 70%,#006154)',
@@ -307,11 +307,11 @@ const brandLogo = computed(() => {
   const fallback = PLATFORM_LOGO || FALLBACK_LOGO
   return brandingContext.value.logo || fallback
 })
-const brandName = computed(() => tenantContext.value?.name || props.nav?.meta?.name || 'Workspace HQ')
+const brandName = computed(() => tenantContext.value?.name || props.nav?.meta?.name || 'Lux Tanning HQ')
 const brandIcon = computed(() => brandingContext.value.icon || brandLogo.value || FALLBACK_LOGO)
 const brandColors = computed(() => ({
-  primary: brandingContext.value.colors?.primary || '#0f172a',
-  secondary: brandingContext.value.colors?.secondary || '#1e293b',
+  primary: brandingContext.value.colors?.primary || '#0C0714',
+  secondary: brandingContext.value.colors?.secondary || '#1b1031',
   accent: brandingContext.value.colors?.accent || theme.value.accent,
 }))
 const workspaceOverrides = computed(() => {

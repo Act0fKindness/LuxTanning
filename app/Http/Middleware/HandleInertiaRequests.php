@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
                         if (!$company) { $company = 'AOK World'; }
                     }
                     if ($role === 'platform_admin' && !$company) {
-                        $company = 'Glint Labs';
+                        $company = 'Lux Tanning';
                     }
 
                     return [

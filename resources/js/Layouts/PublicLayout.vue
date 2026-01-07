@@ -4,11 +4,14 @@
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     </Head>
 
-    <!-- Public Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <nav class="lux-nav navbar navbar-expand-lg fixed-top">
       <div class="container">
         <a class="navbar-brand" href="/">
           <img :src="brandLogo" :alt="companyName" />
+          <div>
+            <p class="brand-eyebrow">Lux Tanning</p>
+            <span>{{ companyName }}</span>
+          </div>
         </a>
         <button class="burger d-lg-none" :class="{ open: drawerOpen }" @click="toggleDrawer" aria-label="Toggle menu">
           <span></span><span></span><span></span>
@@ -16,40 +19,28 @@
         <div class="collapse navbar-collapse justify-content-end d-none d-lg-flex">
           <ul class="navbar-nav align-items-lg-center">
             <li class="nav-item" v-if="hasBackLink"><a class="nav-link" :href="backLink" target="_blank" rel="noopener">Back to {{ marketingHost }}</a></li>
-            <li class="nav-item"><a class="nav-link" href="/#customise">Customise</a></li>
-            <li class="nav-item"><a class="nav-link" href="/#features">Features</a></li>
-            <li class="nav-item"><a class="nav-link" href="/#screens">Screens</a></li>
-            <li class="nav-item"><a class="nav-link" href="/pricing">Pricing</a></li>
-            <li class="nav-item"><a class="nav-link" href="/#faq">FAQ</a></li>
-            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-            <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+            <li class="nav-item" v-for="item in navLinks" :key="item.href"><a class="nav-link" :href="item.href">{{ item.label }}</a></li>
             <li class="nav-item ms-lg-3">
-              <a class="btn btn-ghost btn-sm" href="/#contact"><i class="bi bi-chat-dots me-1"></i>Talk to us</a>
+              <a class="btn btn-ghost btn-sm" href="/book"><i class="bi bi-lightning-charge me-1"></i>Book now</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <!-- Mobile Drawer -->
     <div class="drawer-overlay d-lg-none" v-if="drawerOpen" @click="toggleDrawer(false)"></div>
     <aside class="drawer d-lg-none" :class="{ open: drawerOpen }" tabindex="-1">
       <div class="drawer-header d-flex align-items-center justify-content-between">
         <a href="/" class="d-inline-flex align-items-center text-decoration-none">
           <img :src="brandLogo" :alt="companyName" />
+          <span>{{ companyName }}</span>
         </a>
         <button class="burger small open" @click="toggleDrawer(false)" aria-label="Close menu"><span></span><span></span><span></span></button>
       </div>
       <nav class="drawer-menu">
         <a v-if="hasBackLink" :href="backLink" class="drawer-link" target="_blank" rel="noopener">Back to {{ marketingHost }}</a>
-        <a href="/#customise" class="drawer-link">Customise</a>
-        <a href="/#features" class="drawer-link">Features</a>
-        <a href="/#screens" class="drawer-link">Screens</a>
-        <a href="/pricing" class="drawer-link">Pricing</a>
-        <a href="/#faq" class="drawer-link">FAQ</a>
-        <a href="/login" class="drawer-link">Login</a>
-        <a href="/register" class="drawer-link">Register</a>
-        <a href="/#contact" class="drawer-cta">Talk to us</a>
+        <a v-for="item in navLinks" :key="item.href" :href="item.href" class="drawer-link">{{ item.label }}</a>
+        <a href="/book" class="drawer-cta">Book now</a>
       </nav>
     </aside>
 
@@ -57,23 +48,30 @@
       <slot />
     </main>
 
-    <!-- Always show footer on public pages -->
     <footer class="site-footer">
       <div class="container">
-        <div class="row align-items-center gy-3">
-          <div class="col-md-4 text-center text-md-start">
-            <img :src="brandLogo" :alt="companyName" class="mb-2" />
-            <div class="small">© {{ new Date().getFullYear() }} Glint Labs Ltd. All rights reserved.</div>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <img :src="brandLogo" :alt="companyName" />
+            <p>Premium UV sun beds · Strood, Kent</p>
+            <span>© {{ new Date().getFullYear() }} Lux Tanning Studios Ltd.</span>
           </div>
-          <div class="col-md-4 text-center">
-            <a href="/privacy-ploicy" class="me-3">Privacy</a>
-            <a href="/terms" class="me-3">Terms</a>
-            <a href="#">Status</a>
+          <div class="footer-links">
+            <p class="label">Explore</p>
+            <a href="/courses">Courses</a>
+            <a href="/locations">Studios</a>
+            <a href="/membership">Membership</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
           </div>
-          <div class="col-md-4 text-center text-md-end">
-            <a class="me-2" aria-label="Twitter" href="#"><i class="bi bi-twitter"></i></a>
-            <a class="me-2" aria-label="LinkedIn" href="#"><i class="bi bi-linkedin"></i></a>
-            <a aria-label="Instagram" href="#"><i class="bi bi-instagram"></i></a>
+          <div class="footer-contact">
+            <p class="label">Visit</p>
+            <p>3 Station Road, Strood, ME2 4AX</p>
+            <a href="tel:01634713989">01634 713989</a>
+            <div class="footer-socials">
+              <a aria-label="Instagram" href="https://instagram.com/luxtanning" target="_blank" rel="noopener"><i class="bi bi-instagram"></i></a>
+              <a aria-label="TikTok" href="https://tiktok.com/@luxtanning" target="_blank" rel="noopener"><i class="bi bi-tiktok"></i></a>
+            </div>
           </div>
         </div>
       </div>
@@ -87,7 +85,7 @@ import { computed, ref, onBeforeUnmount } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
 import GlintConcierge from '../Components/GlintConcierge.vue'
 
-const DEFAULT_LOGO = 'https://cdn.shopify.com/s/files/1/0820/3947/2469/files/glint-favicon-black.jpg?v=1762130152'
+const DEFAULT_LOGO = '/images/lux-logo.png'
 
 const page = usePage()
 const drawerOpen = ref(false)
@@ -105,18 +103,26 @@ const activeBranding = computed(() => {
   return fallbackBranding.value
 })
 const brandLogo = computed(() => activeBranding.value.logo || DEFAULT_LOGO)
-const companyName = computed(() =>
-  shouldUseTenantBranding.value ? tenant.value?.name || 'Workspace' : (page.props?.companyName || 'Glint Labs')
-)
+const companyName = computed(() => (shouldUseTenantBranding.value ? tenant.value?.name || 'Lux Tanning' : 'Lux Tanning'))
 const backLink = computed(() =>
-  shouldUseTenantBranding.value ? tenant.value?.back_to_site_url || tenant.value?.marketing_url || null : null
+  shouldUseTenantBranding.value ? tenant.value?.back_to_site_url || tenant.value?.marketing_url || null : null,
 )
 const marketingHost = computed(() => extractHost(backLink.value))
 const hasBackLink = computed(() => Boolean(backLink.value && marketingHost.value))
 const brandStyles = computed(() => ({
-  '--brand-accent': activeBranding.value.colors?.accent || '#4FE1C1',
-  '--brand-primary': activeBranding.value.colors?.primary || '#0D0D0D',
+  '--brand-accent': activeBranding.value.colors?.accent || '#ffffff',
+  '--brand-primary': '#ffffff',
 }))
+
+const navLinks = [
+  { label: 'Courses', href: '/courses' },
+  { label: 'Studios', href: '/locations' },
+  { label: 'Membership', href: '/membership' },
+  { label: 'Technology', href: '/#technology' },
+  { label: 'Shop', href: '/shop' },
+  { label: 'Status', href: '/status' },
+  { label: 'Login', href: '/login' },
+]
 
 const toggleDrawer = force => {
   const next = typeof force === 'boolean' ? force : !drawerOpen.value
@@ -144,37 +150,229 @@ function extractHost(url) {
 </script>
 
 <style>
-:root{ --violet:#5438FF; --sky:#A4B4FF; --mint:#4FE1C1; --white:#FFFFFF; --bg:#F7F8FB; --black:#0D0D0D; --grey:#6B7280; --line:#E9EAF0; --radius:20px; --nav-h:70px; --brand-accent: var(--mint); --brand-primary: var(--black); }
+.layout-root {
+  background: var(--brand-primary);
+}
 
-.navbar{ background:var(--black); padding:.8rem 1.25rem; min-height: var(--nav-h); }
-.navbar-brand img{height:34px; display:block}
-.navbar .nav-link{ color:var(--white)!important; margin-left:1rem; opacity:.9; transition:opacity .2s,color .2s; }
-.navbar .nav-link:hover{color:var(--brand-accent)!important;opacity:1}
-.btn-ghost{ color:var(--black); background:var(--white); border-radius:999px; padding:.55rem 1rem; font-weight:600; }
+:root {
+  --ink: #050505;
+  --stone: #f5f5f5;
+  --nav-h: 78px;
+}
 
-.burger{ position:relative; width:42px; height:42px; border:none; background:transparent; display:inline-flex; align-items:center; justify-content:center; margin-left:auto; cursor:pointer; outline:none }
-.burger span{ position:absolute; width:22px; height:2px; background:#fff; border-radius:2px; transition:transform .25s ease, opacity .2s ease, top .25s ease }
-.burger span:nth-child(1){ top:14px }
-.burger span:nth-child(2){ top:20px }
-.burger span:nth-child(3){ top:26px }
-.burger.open span:nth-child(1){ transform:rotate(45deg); top:20px }
-.burger.open span:nth-child(2){ opacity:0 }
-.burger.open span:nth-child(3){ transform:rotate(-45deg); top:20px }
+.lux-nav {
+  background: #050505;
+  padding: 0.9rem 1.5rem;
+  min-height: var(--nav-h);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+.navbar-brand img {
+  height: 38px;
+}
+.brand-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.6rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.45);
+}
+.navbar .nav-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+  margin-left: 1.25rem;
+  letter-spacing: 0.03em;
+}
+.navbar .nav-link:hover {
+  color: #ffffff !important;
+}
+.btn-ghost {
+  color: #050505;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 0.55rem 1.2rem;
+  font-weight: 600;
+  border: none;
+}
 
-.drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); backdrop-filter:saturate(120%) blur(2px); z-index:1049; animation:fadeIn .2s ease }
-@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
-.drawer{ position:fixed; top:0; left:0; bottom:0; width:88%; max-width:320px; background:#0B0C0F; color:#fff; transform:translateX(-100%); transition:transform .25s ease; z-index:1050; padding:16px }
-.drawer.open{ transform:none }
-.drawer-header img{ height:28px }
-.drawer-menu{ display:flex; flex-direction:column; gap:4px; margin-top:8px }
-.drawer-link{ color:#fff; text-decoration:none; padding:.75rem .5rem; border-radius:8px; display:flex; align-items:center }
-.drawer-link.active, .drawer-link:hover{ background:rgba(255,255,255,.08) }
-.drawer-cta{ margin:10px 14px; display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:.6rem 1rem; background:var(--brand-accent); color:#0B0C0F; text-decoration:none; font-weight:700 }
+.burger {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  cursor: pointer;
+}
+.burger span {
+  position: absolute;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+}
+.burger span:nth-child(1) {
+  top: 14px;
+}
+.burger span:nth-child(2) {
+  top: 21px;
+}
+.burger span:nth-child(3) {
+  top: 28px;
+}
+.burger.open span:nth-child(1) {
+  transform: rotate(45deg);
+  top: 21px;
+}
+.burger.open span:nth-child(2) {
+  opacity: 0;
+}
+.burger.open span:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 21px;
+}
 
-.public-main { min-height: 60vh; padding-top: var(--nav-h); }
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 5, 17, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 1049;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 88%;
+  max-width: 320px;
+  background: #050505;
+  color: #fff;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  z-index: 1050;
+  padding: 20px;
+}
+.drawer.open {
+  transform: none;
+}
+.drawer-header img {
+  height: 28px;
+}
+.drawer-header span {
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+.drawer-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.drawer-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding: 0.8rem 0.6rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+.drawer-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.drawer-cta {
+  margin: 20px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.75rem 1.4rem;
+  background: #ffffff;
+  color: #050505;
+  text-decoration: none;
+  font-weight: 700;
+}
 
-.site-footer{ border-top:1px solid var(--line); padding:24px 0; background:var(--black); color:#bbb; margin-top:32px }
-.site-footer a{ color:var(--brand-accent); margin-left:12px; text-decoration:none }
-.site-footer a:hover{ text-decoration:underline }
-.no-scroll{ overflow:hidden }
+.public-main {
+  min-height: 60vh;
+  padding-top: var(--nav-h);
+}
+
+.site-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 28px 0;
+  background: #050505;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 60px;
+}
+.site-footer a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+}
+.site-footer a:hover {
+  color: #ffffff;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  align-items: start;
+}
+.footer-brand img {
+  height: 42px;
+  margin-bottom: 0.5rem;
+}
+.footer-brand span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+.footer-links,
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.footer-links .label,
+.footer-contact .label {
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.3rem;
+}
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.footer-socials a {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+.footer-socials a:hover {
+  color: #fff;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
 </style>

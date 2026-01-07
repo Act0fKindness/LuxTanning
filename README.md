@@ -1,85 +1,71 @@
-# Glint Labs Platform
+# Lux Tanning OS
 
-> **Required:** after every change run `npm install && npm run build` to keep the Vue + Laravel bundles in sync.
+> **Reminder:** run `npm install && npm run build` after every change so the Laravel + Inertia + Vue bundles stay aligned.
 
-Glint Labs is a Laravel 10 + Inertia + Vue 3 stack that now ships a fully described information architecture for every role in the business (public guest flows, customers, cleaners, managers, owners, accountants, support, and Glint platform admins). The backend exposes thin blueprint routes, while the frontend uses a registry-driven system so designers and engineers can iterate on page content without chasing scattered single-file components.
+Lux Tanning OS is a Laravel 10 + Inertia + Vue 3 monorepo built for multi-studio sun bed operators. Guests can browse courses, purchase memberships, and track minutes across devices. Studio staff (Glow Guides) get a PWA with lamp telemetry, playlists, and upsell prompts. Managers and owners orchestrate courses, marketing, finance, and compliance inside data-rich workspaces, while platform admins run the Lux ecosystem (tenants, health, billing, incidents) from a dedicated hub.
 
 ## Stack quickstart
 
-- **Backend:** Laravel with Sanctum auth, standard `php artisan serve` or Valet.
-- **Frontend:** Vue 3 compiled with Laravel Mix. Run `npm run dev` for watch mode, `npm run build`/`npm run production` for deploy bundles.
-- **Authentication:** Laravel auth forms (newly redesigned) for operators + passwordless `/auth/magic-link` + `/auth/verify` flows for every role.
-- **Mapping:** Google Maps key pulled from `.env` via `config('services.google.maps_key')` and consumed by the new `MapPanel` component.
+- **Backend:** Laravel with Sanctum auth + queue-ready notifications. `php artisan serve` or Valet works out of the box.
+- **Frontend:** Vue 3 bundled with Laravel Mix. Use `npm run dev` for watch mode and `npm run build` for production assets.
+- **Authentication:** Traditional Laravel auth (login/forgot/reset) plus passwordless `/auth/magic-link` + `/auth/verify` flows for every role.
+- **Maps & telemetry:** Google Maps key pulled from `.env` (`services.google.maps_key`) to power things like the course booking map panel.
 
-## Frontend architecture
+## Experience architecture
 
 ```
 resources/js
-├── Components/Blueprint      # Generic section renderers (cards, tables, timelines, map, etc.)
-├── Layouts                  # Public, Auth, and Workspace shells
-├── PageRegistry             # Nav configs, helpers, per-role page specs
-├── Pages
-│   ├── Auth/Public/Shared   # Hosts for public + auth blueprints
-│   ├── Customer/.../Glint  # Thin wrappers that feed role + pageKey into WorkspacePage
-│   └── Workspaces          # WorkspacePage wiring layout + PageBlueprint
-└── router-map.js          # Auto-generated from the registry for developer reference
+├── Components/Blueprint      # Section renderers (summary cards, timelines, tables, pricing plans, etc.)
+├── Layouts                   # Public, Auth, Workspace, Hub shells
+├── PageRegistry              # Navigation + per-role blueprint definitions
+├── Pages                     # Thin PageShell wrappers per role
+└── router-map.js             # Generated route inventory with host + branding metadata
 ```
 
-Every page is defined once inside `resources/js/PageRegistry/pages/*.js`. A page spec records:
+Pages are defined declaratively inside `resources/js/PageRegistry/pages/*.js`. Each spec records:
+- canonical `route` (e.g., `/customer/minutes`, `/cleaner/bed-health`, `/manager/courses`)
+- `layout` + `role` (controls which Workspace shell renders the blueprint)
+- hero copy, nav metadata, and the ordered `sections` to render
 
-- `route` (`/manager/dispatch/board`, `/cleaner/today`, etc.)
-- `layout` + `role` (determines layout + required auth role)
-- `actions`, `quickLinks`, and ordered `sections`
+`PageBlueprint.vue` handles layout, actions, quick links, and renders each section via composable components (summary cards, insight lists, timelines, action grids, map panels, pricing plans, etc.). Shipping a new surface = add an entry to the registry – no bespoke `.vue` files required.
 
-`PageBlueprint.vue` renders those sections using a small set of opinionated components (summary cards, insight lists, tables, timelines, kanban boards, action grids, split panels, checklists, and Google Maps panels). Adding a new page = drop a spec entry, no extra `.vue` files.
+## Role surfaces
 
-## Routing + roles
+- **Public guest site:** `/`, `/courses`, `/book`, `/membership`, `/locations`, `/shop`, `/status`, `/privacy`, `/terms`, `/track/:token`.
+- **Shared pages:** `/me`, `/help`, `/status`, `/privacy`, `/terms`, branded 403/404/500 pages, Lux Concierge widget.
+- **Customer portal:** `/customer/dashboard`, `/customer/minutes`, `/customer/courses`, `/customer/bookings`, `/customer/membership`, `/customer/payments`, `/customer/preferences`, `/customer/documents`, `/customer/support`.
+- **Glow Guide PWA (cleaner role):** `/cleaner/today`, `/cleaner/clients`, `/cleaner/courses`, `/cleaner/bed-health`, `/cleaner/inbox`, `/cleaner/earnings`, `/cleaner/settings`, `/cleaner/offline`.
+- **Studio managers:** `/manager/overview`, `/manager/calendar`, `/manager/waitlist`, `/manager/multiroom`, `/manager/courses`, `/manager/bundles`, `/manager/stock`, `/manager/compliance`, `/manager/customers`, `/manager/membership`, `/manager/marketing`, `/manager/staff`, `/manager/schedules`, `/manager/settlements`, `/manager/settings`.
+- **Owners:** `/owner/overview`, `/owner/portfolio`, `/owner/performance`, `/owner/brand`, `/owner/experience`, `/owner/finance`, `/owner/security`, `/owner/integrations`, `/owner/audit`.
+- **Accountants:** `/accountant/overview`, `/accountant/payouts`, `/accountant/reconciliation`, `/accountant/fees`, `/accountant/disputes`, `/accountant/export`.
+- **Support desk:** `/support/inbox`, `/support/customers`, `/support/studios`, `/support/tools`.
+- **Lux platform / hub:** `/glint/tenants`, `/glint/studios`, `/glint/staff`, `/glint/customers`, `/glint/billing`, `/glint/settlements`, `/glint/templates`, `/glint/health`, `/glint/incidents`, `/glint/growth` plus the legacy `/hub/*` console.
 
-Laravel now registers blueprint routes via a helper (`registerBlueprintRoutes`) so each role-specific shell only needs `pageKey` + optional context IDs. All internal surfaces sit behind `auth` middleware. Public/guest experiences live under the `Public/PageShell`. Highlights:
+The registry drives `resources/js/router-map.js`, so documentation and runtime URLs stay in sync.
 
-- **Shared system:** `/auth/magic-link`, `/auth/verify`, `/me`, `/help`, `/status`, `/privacy`, `/terms`, plus branded 403/404/500 screens.
-- **Public guest:** `/`, `/book`, `/checkout`, `/booking/confirmed/:sessionId`, `/find`, `/manage/:token`, `/track/:trackingId`, `/receipt/:id`.
-- **Customers:** `/customer/*` (dashboard, cleans, addresses, billing, invoices, preferences, security, support, live tracking).
-- **Cleaners (PWA):** `/cleaner/today`, job lifecycle routes, history, earnings, inbox, settings, offline sync.
-- **Managers:** Full dispatch/route builder, jobs CRUD, live map/timeline, customers/subscriptions, staff/shifts/announcements, refunds/adjustments, reports, settings.
-- **Owners:** Overview, finance, roles/RBAC, branding, pricing, domains, API keys, policies, integrations, audit/data retention.
-- **Accountants:** Invoices, payments, payouts, taxes, adjustments, disputes, exports.
-- **Support:** Tickets inbox, customer/job quick actions, tooling (`/support/tools`).
-- **Glint platform:** Tenants directory + impersonation, platform health, billing plans/fees/settlements, compliance (audit, SAR, retention), feature flags/templates/checklists/maps, security/abuse, observability (logs, metrics, incidents, CMS).
+## Branding + host configuration
 
-The developer-facing route map (`resources/js/router-map.js`) now derives from the registry so documentation and runtime always match.
+- `config/tenant.php` controls marketing + workspace domains (`https://{studio}.luxtan.app` for tenants, `https://luxtanning.com` for public, `https://hq.luxtan.app` for platform).
+- `App\Support\TenantBrandingResolver` inspects the incoming host and injects `tenant` + `branding` props (logos, palette tokens, marketing links, "Powered by" settings) into every Inertia response.
+- `WorkspaceLayout` and `PublicLayout` honour those props to display tenant-specific logos, accent colours, and optional “Back to {marketingHost}” / “Powered by Lux” links.
+- Guest pages that should still inherit tenant theming simply set `tenantFacing: true` in the registry, and the layout does the rest.
 
-## White-label hosts + branding
+## Authentication + concierge experience
 
-- `config/tenant.php` defines the base domain for tenant apps (`TENANT_BASE_DOMAIN`), marketing domain defaults, ignored subdomains, fallback logos, palette, and the "Powered by Glint" footer toggle.
-- `App\Support\TenantBrandingResolver` inspects the request host → tenant slug → `tenants.theme_json.branding` to share branding + URL context with Inertia. Every request exposes `tenant` + `branding` props containing logo/icon, palette tokens, fonts, marketing URL, and `back_to_site_url`.
-- `WorkspaceLayout` + `PublicLayout` now read that context to swap logos, recolour CTA buttons, and surface the optional “Back to {marketingHost}” + “Powered by Glint” links whenever the tenant config enables them.
-- The page registry automatically annotates every page with a `host` (`tenant`, `marketing`, or `glint`), concrete `url` (e.g. `https://{tenant}.glintlabs.com/customer/dashboard`), and a `branding` descriptor. Guest pages that should still inherit tenant branding (booking, auth, error pages, /help, etc.) simply set `tenantFacing: true`.
-- `resources/js/router-map.js` now exports that metadata so docs/tooling can see the canonical host + branding treatment for each surface.
-
-Global white-label expectations:
-
-1. Every company tenant gets `https://{tenantSlug}.glintlabs.com` for customer, cleaner, manager, owner, accountant, and support workspaces plus guest flows such as `/book`, `/find`, `/track`, `/receipt`, `/help`, and `/status`.
-2. Their marketing URL/back-link (usually `https://www.{tenant}.com`) is stored in `theme_json.branding.back_to_site_url` and displayed automatically in the new layout footer/sidebar links.
-3. Logos + palette + font choices live in `theme_json.branding.*` so all mailers/pdfs/UI shells reuse tenants’ visual language while keeping a tiny optional “Powered by Glint” attribution.
-
-## Authentication UI refresh
-
-`resources/views/auth/login.blade.php` and `register.blade.php` were rebuilt to match the new platform story: split layouts, clear copy about magic links + role coverage, and consistent styling without external Tailwind scripts. The Laravel auth scaffolding remains (`Auth::routes()`), so existing login flows keep working while the new `/auth/*` pages handle passwordless experiences.
+- Auth layouts (`resources/js/Layouts/AuthLayout.vue` + Blade fallbacks) are themed for Lux, include passwordless CTAs, and highlight device security.
+- The Lux Concierge widget (`resources/js/Components/GlintConcierge.vue` + Blade fallback) mounts on every page. It talks to `SupportChatController`, which proxies to Gemini with a Lux-specific system prompt.
 
 ## Development workflow
 
-1. Install dependencies: `composer install` + `npm install`.
-2. Run Laravel: `php artisan serve` (or your preferred stack).
-3. Frontend dev server: `npm run dev` for hot reload.
-4. Ship builds: `npm run build` (alias for Mix production) **after every change**.
-5. Optional: `php artisan test` for backend coverage.
+1. `composer install`
+2. `npm install`
+3. `php artisan serve`
+4. `npm run dev` (during development) or `npm run build` before pushing/shipping
+5. Optional: `php artisan test`
 
-## Conventions recap
+## Conventions
 
-- **Page naming:** `role.section.slug` (e.g., `manager.dispatch.board`).
-- **Contexts:** Pass IDs through the `context` prop (e.g., `jobId`, `tenantId`) so blueprint sections can surface dynamic text via the shared formatter.
-- **Navigation:** Role menus live in `resources/js/PageRegistry/nav.ts` and feed `WorkspaceLayout` to keep the UI consistent.
-- **Docs:** Update this README whenever you add roles/pages so product + engineering share one source of truth.
-# GlintLabs
-# GlintLabs
+- **Blueprint keys:** `role.section.slug` (`manager.courses`, `customer.minutes`, etc.).
+- **Context values:** pass IDs through `context` props when rendering a blueprint so formatter helpers can swap placeholders.
+- **Navigation:** update `resources/js/PageRegistry/nav.js` whenever you add/remove pages so WorkspaceLayout menus stay accurate.
+- **Docs:** this README is the canonical product+engineering overview — extend it when you add domains, roles, or cross-cutting features.

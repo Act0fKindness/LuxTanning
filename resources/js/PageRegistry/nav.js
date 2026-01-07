@@ -1,24 +1,23 @@
-
 export const roleNav = {
   customer: {
     primary: [
       {
-        label: 'My Cleans',
+        label: 'Glow plan',
         items: [
-          { label: 'Dashboard', href: '/customer/dashboard', icon: 'bi-speedometer2' },
-          { label: 'All cleans', href: '/customer/cleans', icon: 'bi-list-check' },
-          { label: 'Track live', href: '/customer/track/next', icon: 'bi-map' },
+          { label: 'Dashboard', href: '/customer/dashboard', icon: 'bi-sun' },
+          { label: 'Minutes wallet', href: '/customer/minutes', icon: 'bi-hourglass-split' },
+          { label: 'My courses', href: '/customer/courses', icon: 'bi-collection-play' },
+          { label: 'Bookings', href: '/customer/bookings', icon: 'bi-calendar-heart' },
         ],
       },
       {
         label: 'Account',
         items: [
-          { label: 'Addresses', href: '/customer/addresses', icon: 'bi-geo' },
-          { label: 'Billing', href: '/customer/billing', icon: 'bi-credit-card' },
-          { label: 'Invoices', href: '/customer/invoices', icon: 'bi-receipt' },
+          { label: 'Membership', href: '/customer/membership', icon: 'bi-star' },
+          { label: 'Payments', href: '/customer/payments', icon: 'bi-credit-card' },
           { label: 'Preferences', href: '/customer/preferences', icon: 'bi-sliders' },
-          { label: 'Security', href: '/customer/security', icon: 'bi-shield-lock' },
-          { label: 'Support', href: '/customer/support', icon: 'bi-life-preserver', feature: 'support' },
+          { label: 'Documents', href: '/customer/documents', icon: 'bi-file-earmark-text' },
+          { label: 'Support', href: '/customer/support', icon: 'bi-life-preserver' },
         ],
       },
     ],
@@ -26,19 +25,21 @@ export const roleNav = {
   cleaner: {
     primary: [
       {
-        label: 'Today',
+        label: 'Studio shift',
         items: [
-          { label: 'Route timeline', href: '/cleaner/today', icon: 'bi-route' },
-          { label: 'Job history', href: '/cleaner/history', icon: 'bi-clock-history' },
-          { label: 'Inbox', href: '/cleaner/inbox', icon: 'bi-inbox' },
+          { label: 'Shift board', href: '/cleaner/today', icon: 'bi-sunrise' },
+          { label: 'Client notes', href: '/cleaner/clients', icon: 'bi-journal-richtext' },
+          { label: 'Courses & promos', href: '/cleaner/courses', icon: 'bi-bag-heart' },
+          { label: 'Bed health', href: '/cleaner/bed-health', icon: 'bi-activity' },
         ],
       },
       {
-        label: 'My account',
+        label: 'Me',
         items: [
+          { label: 'Inbox', href: '/cleaner/inbox', icon: 'bi-chat-dots' },
           { label: 'Earnings', href: '/cleaner/earnings', icon: 'bi-cash-stack' },
           { label: 'Settings', href: '/cleaner/settings', icon: 'bi-gear' },
-          { label: 'Offline sync', href: '/cleaner/offline', icon: 'bi-cloud-arrow-up' },
+          { label: 'Offline kit', href: '/cleaner/offline', icon: 'bi-wifi-off' },
         ],
       },
     ],
@@ -46,51 +47,38 @@ export const roleNav = {
   manager: {
     primary: [
       {
-        label: 'Dispatch',
+        label: 'Studio ops',
         items: [
-          { label: 'Board', href: '/manager/dispatch/board', icon: 'bi-kanban' },
-          { label: 'Routes', href: '/manager/dispatch/routes', icon: 'bi-signpost-split' },
-          { label: 'Exceptions', href: '/manager/dispatch/exceptions', icon: 'bi-exclamation-octagon' },
-          { label: 'Bulk actions', href: '/manager/dispatch/bulk', icon: 'bi-grid' },
+          { label: 'Overview', href: '/manager/overview', icon: 'bi-speedometer2' },
+          { label: 'Calendar', href: '/manager/calendar', icon: 'bi-calendar3' },
+          { label: 'Waitlist', href: '/manager/waitlist', icon: 'bi-people' },
+          { label: 'Multi-room view', href: '/manager/multiroom', icon: 'bi-columns-gap' },
         ],
       },
       {
-        label: 'Jobs & customers',
+        label: 'Courses & minutes',
         items: [
-          { label: 'Jobs', href: '/manager/jobs', icon: 'bi-briefcase' },
-          { label: 'New job', href: '/manager/jobs/new', icon: 'bi-plus-circle' },
-          { label: 'Checklists', href: '/manager/checklists', icon: 'bi-ui-checks' },
-          { label: 'Add-ons', href: '/manager/addons', icon: 'bi-bag-plus' },
-          { label: 'Customers', href: '/manager/customers', icon: 'bi-people' },
-          { label: 'Subscriptions', href: '/manager/subscriptions', icon: 'bi-repeat' },
+          { label: 'Course designer', href: '/manager/courses', icon: 'bi-magic' },
+          { label: 'Bundles', href: '/manager/bundles', icon: 'bi-gift' },
+          { label: 'Stock & lamps', href: '/manager/stock', icon: 'bi-box-seam' },
+          { label: 'Compliance', href: '/manager/compliance', icon: 'bi-shield-check' },
+        ],
+      },
+      {
+        label: 'Customers & growth',
+        items: [
+          { label: 'Customers', href: '/manager/customers', icon: 'bi-person-hearts' },
+          { label: 'Memberships', href: '/manager/membership', icon: 'bi-stars' },
+          { label: 'Marketing', href: '/manager/marketing', icon: 'bi-megaphone' },
         ],
       },
       {
         label: 'People & finance',
         items: [
-          { label: 'Staff roster', href: '/manager/staff', icon: 'bi-person-badge' },
-          { label: 'Shifts', href: '/manager/shifts', icon: 'bi-calendar2-week' },
-          { label: 'Announcements', href: '/manager/announcements', icon: 'bi-megaphone' },
-          { label: 'Refunds', href: '/manager/refunds', icon: 'bi-arrow-counterclockwise' },
-          { label: 'Adjustments', href: '/manager/adjustments', icon: 'bi-journal-plus' },
-        ],
-      },
-      {
-        label: 'Insights',
-        items: [
-          { label: 'Live map', href: '/manager/live/map', icon: 'bi-geo-alt' },
-          { label: 'Live timeline', href: '/manager/live/timeline', icon: 'bi-activity' },
-          { label: 'Ops report', href: '/manager/reports/operations', icon: 'bi-graph-up' },
-          { label: 'Quality report', href: '/manager/reports/quality', icon: 'bi-star' },
-          { label: 'Volume report', href: '/manager/reports/volume', icon: 'bi-diagram-3' },
-        ],
-      },
-      {
-        label: 'Settings',
-        items: [
-          { label: 'Policies', href: '/manager/settings/policies', icon: 'bi-shield' },
-          { label: 'Notifications', href: '/manager/settings/notifications', icon: 'bi-chat-square-text' },
-          { label: 'Integrations', href: '/manager/settings/integrations', icon: 'bi-plug' },
+          { label: 'Staff', href: '/manager/staff', icon: 'bi-person-badge' },
+          { label: 'Schedules', href: '/manager/schedules', icon: 'bi-calendar2-week' },
+          { label: 'Settlements', href: '/manager/settlements', icon: 'bi-bank' },
+          { label: 'Settings', href: '/manager/settings', icon: 'bi-gear-wide-connected' },
         ],
       },
     ],
@@ -98,45 +86,27 @@ export const roleNav = {
   owner: {
     primary: [
       {
-        label: 'Company',
+        label: 'Portfolio',
         items: [
-          { label: 'Company overview', href: '/owner/overview', icon: 'bi-speedometer2' },
-          { label: 'Branding', href: '/owner/branding', icon: 'bi-palette' },
-          { label: 'Domains', href: '/owner/domains', icon: 'bi-globe' },
-          { label: 'Management', href: '/owner/roles', icon: 'bi-people' },
+          { label: 'Owner overview', href: '/owner/overview', icon: 'bi-stars' },
+          { label: 'Studios', href: '/owner/portfolio', icon: 'bi-building' },
+          { label: 'Performance', href: '/owner/performance', icon: 'bi-graph-up' },
         ],
       },
       {
-        label: 'Operations',
+        label: 'Brand & CX',
         items: [
-          { label: 'Dispatch board', href: '/owner/dispatch/board', icon: 'bi-kanban' },
-          { label: 'Routes', href: '/owner/dispatch/routes', icon: 'bi-signpost-split' },
-          { label: 'Jobs', href: '/owner/jobs', icon: 'bi-briefcase' },
-          { label: 'Customers', href: '/owner/customers', icon: 'bi-people' },
-          { label: 'Subscriptions', href: '/owner/subscriptions', icon: 'bi-repeat' },
-          { label: 'Staff', href: '/owner/staff', icon: 'bi-person-badge' },
-          { label: 'Staff roster', href: '/owner/staff/roster', icon: 'bi-calendar2-week' },
-        ],
-      },
-      {
-        label: 'Finance',
-        items: [
-          { label: 'Stripe Connect', href: '/owner/billing/stripe', icon: 'bi-credit-card' },
-          { label: 'Invoices', href: '/owner/invoices', icon: 'bi-receipt' },
-          { label: 'Payouts', href: '/owner/payouts', icon: 'bi-bank' },
-          { label: 'Taxes', href: '/owner/taxes', icon: 'bi-percent' },
-          { label: 'Chargebacks', href: '/owner/chargebacks', icon: 'bi-shield-exclamation' },
+          { label: 'Branding', href: '/owner/brand', icon: 'bi-palette' },
+          { label: 'Experience kit', href: '/owner/experience', icon: 'bi-body-text' },
         ],
       },
       {
         label: 'Controls',
         items: [
-          { label: 'Policies', href: '/owner/policies', icon: 'bi-journal-text' },
-          { label: 'API keys', href: '/owner/api-keys', icon: 'bi-code-slash' },
+          { label: 'Finance', href: '/owner/finance', icon: 'bi-piggy-bank' },
+          { label: 'Security', href: '/owner/security', icon: 'bi-shield-lock' },
           { label: 'Integrations', href: '/owner/integrations', icon: 'bi-plug' },
-          { label: 'Legal', href: '/owner/legal', icon: 'bi-bag-check' },
-          { label: 'Audit log', href: '/owner/audit-log', icon: 'bi-clipboard-data' },
-          { label: 'Data retention', href: '/owner/data-retention', icon: 'bi-database' },
+          { label: 'Audit log', href: '/owner/audit', icon: 'bi-clipboard-data' },
         ],
       },
     ],
@@ -146,13 +116,12 @@ export const roleNav = {
       {
         label: 'Finance',
         items: [
-          { label: 'Invoices', href: '/accountant/invoices', icon: 'bi-receipt' },
-          { label: 'Payments', href: '/accountant/payments', icon: 'bi-credit-card2-back' },
+          { label: 'Revenue pulse', href: '/accountant/overview', icon: 'bi-cash-coin' },
           { label: 'Payouts', href: '/accountant/payouts', icon: 'bi-bank' },
-          { label: 'Taxes', href: '/accountant/taxes', icon: 'bi-percent' },
-          { label: 'Adjustments', href: '/accountant/adjustments', icon: 'bi-journal-plus' },
+          { label: 'Reconciliation', href: '/accountant/reconciliation', icon: 'bi-columns' },
+          { label: 'Fees & taxes', href: '/accountant/fees', icon: 'bi-percent' },
           { label: 'Disputes', href: '/accountant/disputes', icon: 'bi-shield-exclamation' },
-          { label: 'Exports', href: '/accountant/exports', icon: 'bi-cloud-arrow-down' },
+          { label: 'Exports', href: '/accountant/export', icon: 'bi-filetype-csv' },
         ],
       },
     ],
@@ -162,9 +131,9 @@ export const roleNav = {
       {
         label: 'Care desk',
         items: [
-          { label: 'Tickets', href: '/support/tickets', icon: 'bi-inbox' },
-          { label: 'Customer lookup', href: '/support/customers/latest', icon: 'bi-search' },
-          { label: 'Job lookup', href: '/support/jobs/last', icon: 'bi-geo' },
+          { label: 'Inbox', href: '/support/inbox', icon: 'bi-inbox' },
+          { label: 'Customer lookup', href: '/support/customers', icon: 'bi-search' },
+          { label: 'Studio feed', href: '/support/studios', icon: 'bi-broadcast-pin' },
           { label: 'Tools', href: '/support/tools', icon: 'bi-wrench' },
         ],
       },
@@ -175,51 +144,26 @@ export const roleNav = {
       {
         label: 'Platform control',
         items: [
-          { label: 'Companies', href: '/glint/companies', icon: 'bi-buildings' },
-          { label: 'Customers', href: '/glint/customers', icon: 'bi-people' },
+          { label: 'Tenants', href: '/glint/tenants', icon: 'bi-diagram-3' },
+          { label: 'Studios', href: '/glint/studios', icon: 'bi-house-door' },
           { label: 'Staff', href: '/glint/staff', icon: 'bi-person-badge' },
-          { label: 'Jobs', href: '/glint/jobs', icon: 'bi-briefcase' },
-          { label: 'Platform overview', href: '/glint/platform', icon: 'bi-diagram-3' },
+          { label: 'Customers', href: '/glint/customers', icon: 'bi-people' },
         ],
       },
       {
-        label: 'Health',
+        label: 'Billing & policy',
         items: [
-          { label: 'Queues', href: '/glint/health/queues', icon: 'bi-server' },
-          { label: 'Webhooks', href: '/glint/health/webhooks', icon: 'bi-wifi' },
-          { label: 'Services', href: '/glint/health/services', icon: 'bi-hdd-network' },
-          { label: 'Incidents', href: '/glint/incidents', icon: 'bi-lightning' },
+          { label: 'Plans', href: '/glint/billing', icon: 'bi-layers' },
+          { label: 'Settlements', href: '/glint/settlements', icon: 'bi-bank' },
+          { label: 'Templates', href: '/glint/templates', icon: 'bi-journal-richtext' },
         ],
       },
       {
-        label: 'Billing',
+        label: 'Reliability',
         items: [
-          { label: 'Plans', href: '/glint/billing/plans', icon: 'bi-layers' },
-          { label: 'Fees', href: '/glint/billing/fees', icon: 'bi-cash-coin' },
-          { label: 'Settlements', href: '/glint/billing/settlements', icon: 'bi-bank' },
-        ],
-      },
-      {
-        label: 'Compliance',
-        items: [
-          { label: 'Audit', href: '/glint/audit', icon: 'bi-clipboard-data' },
-          { label: 'SAR', href: '/glint/gdpr/sar', icon: 'bi-envelope-open' },
-          { label: 'Data exports', href: '/glint/data-exports', icon: 'bi-cloud-arrow-down' },
-          { label: 'Retention', href: '/glint/retention', icon: 'bi-archive' },
-          { label: 'Security', href: '/glint/security', icon: 'bi-shield-lock' },
-          { label: 'Abuse', href: '/glint/abuse', icon: 'bi-shield-exclamation' },
-        ],
-      },
-      {
-        label: 'Features',
-        items: [
-          { label: 'Feature flags', href: '/glint/feature-flags', icon: 'bi-toggle2-on' },
-          { label: 'Templates', href: '/glint/templates', icon: 'bi-card-text' },
-          { label: 'Checklists', href: '/glint/checklists', icon: 'bi-ui-checks' },
-          { label: 'Maps', href: '/glint/maps', icon: 'bi-geo-alt' },
-          { label: 'CMS', href: '/glint/cms', icon: 'bi-newspaper' },
-          { label: 'Metrics', href: '/glint/metrics', icon: 'bi-graph-up' },
-          { label: 'Logs', href: '/glint/logs', icon: 'bi-terminal' },
+          { label: 'Health', href: '/glint/health', icon: 'bi-activity' },
+          { label: 'Incidents', href: '/glint/incidents', icon: 'bi-lightning-charge' },
+          { label: 'Growth', href: '/glint/growth', icon: 'bi-graph-up-arrow' },
         ],
       },
     ],

@@ -1,100 +1,107 @@
 import { definePage } from '../registry'
-import { summary, insights, dataTable, actionGrid } from '../helpers'
+import { summary, dataTable, actionGrid, insights, statusList } from '../helpers'
 
 const supportSummary = [
-  { label: 'Open tickets', value: '62', delta: '22 SLA risk' },
-  { label: 'Avg first response', value: '5m', delta: 'Goal <10m' },
-  { label: 'Escalations', value: '4', delta: 'Owner attention' },
+  { label: 'Open tickets', value: '42', delta: '12 waiting on guest' },
+  { label: 'Avg response', value: '3m 42s', delta: 'Goal <5m' },
+  { label: 'CSAT', value: '4.92/5', delta: 'Past 7 days' },
 ]
 
+const createSupportPage = spec => ({
+  key: spec.key,
+  route: spec.route,
+  layout: 'workspace',
+  role: 'support',
+  badge: 'Concierge desk',
+  title: spec.title,
+  description: spec.description,
+  sections: [
+    summary(`${spec.key}-summary`, 'Desk pulse', spec.summaryCards || supportSummary),
+    ...(spec.sections || []),
+  ],
+})
+
 const supportPages = [
-  {
-    key: 'support.tickets',
-    route: '/support/tickets',
-    layout: 'workspace',
-    role: 'support',
-    badge: 'Support desk',
-    title: 'Tickets',
-    description: 'Inbox with SLA timers and role-aware macros.',
+  createSupportPage({
+    key: 'support.inbox',
+    route: '/support/inbox',
+    title: 'Omnichannel inbox',
+    description: 'Email, SMS, chat, and Instagram DMs unified with Lux context.',
     sections: [
-      summary('support-tickets-summary', 'Queue health', supportSummary),
-      dataTable('support-tickets-table', 'Active tickets', [
-        { label: 'Ticket', key: 'ticket' },
-        { label: 'Customer', key: 'customer' },
-        { label: 'Status', key: 'status' },
-        { label: 'SLA', key: 'sla', align: 'right' },
+      dataTable('support-inbox-table', 'Queues', [
+        { label: 'Queue', key: 'queue' },
+        { label: 'Waiting', key: 'waiting', align: 'right' },
+        { label: 'SLA', key: 'sla' },
+        { label: 'Owner', key: 'owner' },
       ], [
-        { ticket: '#T-540', customer: 'Priya', status: 'Waiting on customer', sla: '02:14' },
-        { ticket: '#T-539', customer: 'Marcus', status: 'Needs reroute', sla: '00:32' },
+        { queue: 'Members · Wallet', waiting: '9', sla: '<5m', owner: 'Team Amber' },
+        { queue: 'Studios · Ops', waiting: '3', sla: '<10m', owner: 'Team Drift' },
+        { queue: 'Partners', waiting: '2', sla: '<30m', owner: 'Priya' },
       ]),
-      insights('support-tickets-highlights', 'Workflow', [
-        { title: 'Role macros', description: 'Send manager, cleaner, or customer templates with correct branding.' },
-        { title: 'Live state sync', description: 'See job + dispatch context while replying.' },
-        { title: 'Escalation ladder', description: 'Escalate to manager or owner with one click when policy thresholds exceeded.' },
+      actionGrid('support-inbox-actions', 'Shortcuts', [
+        { label: 'Macros', description: 'Pre-built replies with wallet + lamp data.', icon: 'bi-lightning' },
+        { label: 'Escalate to manager', description: 'Push issue straight into /manager/inbox.', icon: 'bi-arrow-up-right' },
+        { label: 'Trigger refund', description: 'Start credit workflow with proper guardrails.', icon: 'bi-cash-stack' },
       ]),
     ],
-  },
-  {
-    key: 'support.customer-detail',
-    route: '/support/customers/:id',
-    layout: 'workspace',
-    role: 'support',
-    badge: 'Support desk',
-    title: 'Customer quick actions',
-    description: 'Search customer, resend links, change windows within policy.',
+  }),
+  createSupportPage({
+    key: 'support.customers',
+    route: '/support/customers',
+    title: 'Customer lookup',
+    description: 'Search by email, phone, membership ID, or kiosk check-in token.',
     sections: [
-      summary('support-customer-summary', 'Customer snapshot', supportSummary),
-      actionGrid('support-customer-actions', 'Common actions', [
-        { label: 'Resend magic link', description: 'Send secure manage link in one tap.', icon: 'bi-link' },
-        { label: 'Adjust window', description: 'Move today’s window within policy limits.', icon: 'bi-clock-history' },
-        { label: 'Mask PII', description: 'Anonymise data on request.', icon: 'bi-incognito' },
+      dataTable('support-customers-table', 'Recent lookups', [
+        { label: 'Guest', key: 'guest' },
+        { label: 'Plan', key: 'plan' },
+        { label: 'Minutes', key: 'minutes', align: 'right' },
+        { label: 'Status', key: 'status' },
+      ], [
+        { guest: 'Isla Rose', plan: 'Glow Pro', minutes: '120', status: 'Active' },
+        { guest: 'Kai Hart', plan: 'Dawn', minutes: '12', status: 'Refund review' },
       ]),
-      insights('support-customer-notes', 'Context', [
-        { title: 'Last communication', description: 'Summary of last touch with timestamps.' },
-        { title: 'Plan status', description: 'Active/paused, next billing date.' },
-        { title: 'Support sentiment', description: 'CSAT + history of disputes.' },
+      insights('support-customers-tools', 'Context tools', [
+        { title: 'Session playback', description: 'Watch lamp + concierge events for the visit.' },
+        { title: 'Health checks', description: 'See last contraindication updates.' },
+        { title: 'Wallet overrides', description: 'Issue credits with audit trail.' },
       ]),
     ],
-  },
-  {
-    key: 'support.job-detail',
-    route: '/support/jobs/:jobId',
-    layout: 'workspace',
-    role: 'support',
-    badge: 'Support desk',
-    title: 'Job status',
-    description: 'View job status, reassign, notify customer.',
+  }),
+  createSupportPage({
+    key: 'support.studios',
+    route: '/support/studios',
+    title: 'Studio feed',
+    description: 'Monitor incidents, staff escalations, and lamp telemetry for every studio.',
     sections: [
-      summary('support-job-summary', 'Job snapshot', supportSummary),
-      insights('support-job-actions', 'Tooling', [
-        { title: 'Notify customer', description: 'Send SMS/email updates with templated copy.' },
-        { title: 'Reassign cleaner', description: 'Search available cleaners + travel time.' },
-        { title: 'Dispatch ping', description: 'Push updates to managers for urgent follow-up.' },
+      statusList('support-studios-status', 'Active incidents', [
+        { label: 'Mayfair', value: 'None', hint: 'All systems go', state: 'success' },
+        { label: 'Shoreditch', value: 'Lamp warm warning', hint: 'Room 2 5° high', state: 'warning' },
+        { label: 'Manchester', value: 'Retail stock low', hint: 'Hydration kits', state: 'danger' },
+      ]),
+      actionGrid('support-studios-actions', 'Studio tooling', [
+        { label: 'Broadcast update', description: 'Send SMS/email to affected members.', icon: 'bi-megaphone' },
+        { label: 'Ping on-call lead', description: 'Route to specific GM with priority level.', icon: 'bi-phone' },
+        { label: 'Log incident', description: 'Capture notes + resolution timeline.', icon: 'bi-clipboard-pulse' },
       ]),
     ],
-  },
-  {
+  }),
+  createSupportPage({
     key: 'support.tools',
     route: '/support/tools',
-    layout: 'workspace',
-    role: 'support',
-    badge: 'Support desk',
-    title: 'Tools',
-    description: 'Utility panel for magic links, receipts, anonymisation.',
+    title: 'Toolbox',
+    description: 'Utilities to impersonate guests, regenerate magic links, or purge cached kiosks.',
     sections: [
-      summary('support-tools-summary', 'Usage', supportSummary),
       actionGrid('support-tools-actions', 'Utilities', [
-        { label: 'Resend receipt', description: 'Email PDF to any address.', icon: 'bi-envelope' },
-        { label: 'Generate manage link', description: 'Create short-lived manage link for customer.', icon: 'bi-magic' },
-        { label: 'Anonymise PII', description: 'Scrub personal data upon GDPR request.', icon: 'bi-incognito' },
+        { label: 'Impersonate member', description: 'Jump into /customer/* with audit logging.', icon: 'bi-eye' },
+        { label: 'Magic link reset', description: 'Send branded link or SMS OTP instantly.', icon: 'bi-link-45deg' },
+        { label: 'Wipe kiosk binding', description: 'Clear device pairing + issue new code.', icon: 'bi-tablet' },
       ]),
       insights('support-tools-guardrails', 'Guardrails', [
-        { title: 'Audit logging', description: 'Every tool action logged for compliance.' },
-        { title: 'Rate limits', description: 'Throttle high-risk actions like manage link creation.' },
-        { title: 'Policy reminders', description: 'Remind agents of rules before performing destructive actions.' },
+        { title: 'Dual approval', description: 'Certain actions require manager approval + MFA.' },
+        { title: 'Auto-logging', description: 'Every impersonation or override lands in audit log.' },
       ]),
     ],
-  },
+  }),
 ]
 
 export function registerSupportPages() {

@@ -88,7 +88,7 @@ const initMap = async () => {
 
     renderMarkers()
   } catch (error) {
-    console.warn('[Glint] Map load failed', error)
+      console.warn('[Lux] Map load failed', error)
     mapError.value = 'Map preview unavailable right now.'
   } finally {
     mapLoading.value = false

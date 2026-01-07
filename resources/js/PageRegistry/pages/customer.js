@@ -1,24 +1,23 @@
 import { definePage } from '../registry'
-import { summary, insights, dataTable, timeline, actionGrid } from '../helpers'
+import { summary, insights, dataTable, actionGrid, timeline, checklist, statusList } from '../helpers'
 
-const defaultMetrics = [
-  { label: 'Next clean', value: 'Wed · 10:00', delta: 'Track link ready 1h before' },
-  { label: 'Plan cadence', value: 'Every 2 weeks', delta: 'Change any time' },
-  { label: 'Payment status', value: 'Paid', delta: 'Auto-charge enabled' },
+const walletSummary = [
+  { label: 'Minutes remaining', value: '82', delta: 'Glow Pro wallet' },
+  { label: 'Next booking', value: 'Thu · 18:20', delta: 'Mayfair · Room 3' },
+  { label: 'Waitlist position', value: '#3', delta: 'Shoreditch Loft' },
 ]
 
-const createCustomerPage = input => ({
-  key: input.key,
-  route: input.route,
+const createCustomerPage = spec => ({
+  key: spec.key,
+  route: spec.route,
   layout: 'workspace',
   role: 'customer',
-  badge: input.badge || 'Customer portal',
-  title: input.title,
-  description: input.description,
+  badge: 'Member portal',
+  title: spec.title,
+  description: spec.description,
   sections: [
-    summary(`${input.key}-summary`, 'At a glance', input.metrics || defaultMetrics),
-    insights(`${input.key}-insights`, 'What you can do', input.highlights),
-    ...(input.sections || []),
+    ...(spec.skipSummary ? [] : [summary(`${spec.key}-summary`, 'Glow snapshot', spec.summaryCards || walletSummary)]),
+    ...(spec.sections || []),
   ],
 })
 
@@ -26,153 +25,177 @@ const customerPages = [
   createCustomerPage({
     key: 'customer.dashboard',
     route: '/customer/dashboard',
-    title: 'Dashboard',
-    description: 'Shows upcoming jobs, quick reschedule, and live tracking shortcuts.',
-    highlights: [
-      { title: 'Upcoming jobs', description: 'Timeline of the next three visits with reschedule + skip buttons and ETA badges.', meta: ['Timeline'] },
-      { title: 'Track now', description: 'One tap to open live map for today’s clean when the cleaner starts travelling.' },
-      { title: 'Account reminders', description: 'Cards for expiring cards, pending invoices, or paused plans.' },
+    title: 'Your glow plan',
+    description: 'Track minutes, upcoming sessions, recommendations, and studio updates at a glance.',
+    sections: [
+      actionGrid('customer-dash-actions', 'Quick actions', [
+        { label: 'Book a session', description: 'Pick a time in any studio.', icon: 'bi-lightning-charge', href: '/book' },
+        { label: 'Share guest pass', description: 'Invite a friend with remaining minutes.', icon: 'bi-send' },
+        { label: 'Chat with Glow Guide', description: 'Concierge replies within 4 min.', icon: 'bi-chat-dots' },
+      ]),
+      timeline('customer-dash-timeline', 'Upcoming timeline', [
+        { title: 'Glow Pro — Room 3', time: 'Thu · 18:20', detail: 'Hydration kit ready · Playlist “Amber Drift”', state: 'success' },
+        { title: 'Waitlist — Shoreditch', time: 'Fri · Flex', detail: 'You are #3, move up automatically if a spot opens.', state: 'info' },
+        { title: 'Lamp lab invite', time: 'Sat · 11:00', detail: 'Solar Club masterclass + product drop.', state: 'warning' },
+      ]),
     ],
   }),
   createCustomerPage({
-    key: 'customer.cleans',
-    route: '/customer/cleans',
-    title: 'All cleans',
-    description: 'List view of upcoming and past jobs with filters and export.',
-    highlights: [
-      { title: 'Segmented tabs', description: 'Separate upcoming vs. history with quick search by address or cleaner.' },
-      { title: 'Reschedule in-line', description: 'Drag any future visit onto a new day, respecting policy windows.' },
-      { title: 'Download receipts', description: 'Each entry links to /receipt/:id without leaving the portal.' },
-    ],
+    key: 'customer.minutes',
+    route: '/customer/minutes',
+    title: 'Minutes wallet',
+    description: 'All top-ups, exposure logs, and pause controls live here.',
     sections: [
-      dataTable('customer-cleans-table', 'Recent visits', [
-        { label: 'Date', key: 'date' },
-        { label: 'Cleaner', key: 'cleaner' },
-        { label: 'Status', key: 'status' },
-        { label: 'Actions', key: 'actions', align: 'right' },
+      dataTable('customer-minutes-ledger', 'Wallet ledger', [
+        { label: 'Event', key: 'event' },
+        { label: 'Minutes', key: 'minutes', align: 'right' },
+        { label: 'Studio', key: 'studio' },
+        { label: 'Balance', key: 'balance', align: 'right' },
       ], [
-        { date: 'Wed 10 Apr · 10:00', cleaner: 'Maya', status: 'Completed', actions: 'Receipt' },
-        { date: 'Fri 26 Apr · 14:00', cleaner: 'Leo', status: 'Scheduled', actions: 'Reschedule' },
+        { event: 'Session · 9 May', minutes: '-18', studio: 'Mayfair · Room 2', balance: '82' },
+        { event: 'Top-up · Glow Pro', minutes: '+160', studio: 'Online', balance: '100' },
+      ]),
+      checklist('customer-minutes-controls', 'Controls', [
+        { label: 'Pause wallet', detail: 'Freeze usage for up to 45 days.' },
+        { label: 'Transfer minutes', detail: 'Gift minutes to another member with approval.' },
+        { label: 'Request refund', detail: 'Trigger review if a session was cut short.' },
       ]),
     ],
   }),
   createCustomerPage({
-    key: 'customer.clean-detail',
-    route: '/customer/cleans/:jobId',
-    title: 'Clean details',
-    description: 'Full job breakdown, notes, checklists, add-ons, and track link.',
-    highlights: [
-      { title: 'Scope overview', description: 'Show plan, add-ons, cleaner assignments, and prep notes.' },
-      { title: 'Checklist playback', description: 'View before/after photos, checklist ticks, and incident notes.' },
-      { title: 'One-tap support', description: 'Raise dispute or request re-clean directly from the job.' },
-    ],
+    key: 'customer.courses',
+    route: '/customer/courses',
+    title: 'Courses & recommendations',
+    description: 'Upgrade, mix, or add boosters depending on your goals.',
     sections: [
-      timeline('customer-clean-timeline', 'Job timeline', [
-        { title: 'En-route', time: '09:42', detail: 'Cleaner left previous job.', state: 'info' },
-        { title: 'On site', time: '10:10', detail: 'Checklist started · kitchen first', state: 'success' },
-        { title: 'Completed', time: '12:05', detail: 'After photos uploaded', state: 'success' },
+      insights('customer-courses-options', 'Course library', [
+        { title: 'Dawn Reset', description: '4 sessions · hydration-focused plan for events.' },
+        { title: 'Glow Pro 20', description: '8 sessions · rollover + concierge perks.' },
+        { title: 'Solar Club', description: 'Unlimited with lamp labs and guest passes.' },
+      ]),
+      actionGrid('customer-courses-actions', 'Recommended next moves', [
+        { label: 'Upgrade to Glow Pro', description: 'Instantly adds 160 minutes.', icon: 'bi-arrow-up-right' },
+        { label: 'Add hydration boosters', description: 'Pair with your next booking.', icon: 'bi-droplet-half' },
+        { label: 'Share referral', description: 'Earn 20 minutes when friends join.', icon: 'bi-gift' },
       ]),
     ],
   }),
   createCustomerPage({
-    key: 'customer.track',
-    route: '/customer/track/:jobId',
-    title: 'Track clean',
-    description: 'Embedded live tracking page for authenticated customers.',
-    highlights: [
-      { title: 'Background refresh', description: 'Auto-updates ETA, lateness badges, and cleaner profile without reload.' },
-      { title: 'Communication shortcuts', description: 'Buttons to call, text, or notify support with context.' },
-      { title: 'Neighborhood tips', description: 'Shows parking and building instructions pinned from addresses.' },
-    ],
+    key: 'customer.bookings',
+    route: '/customer/bookings',
+    title: 'Bookings & waitlists',
+    description: 'Manage upcoming sessions, move times, or cancel with clear policies.',
     sections: [
-      actionGrid('customer-track-actions', 'Quick actions', [
-        { label: 'Message cleaner', description: 'Send templated or custom notes.', icon: 'bi-chat-left-text' },
-        { label: 'Share link', description: 'Send live tracking to a family member.', icon: 'bi-share' },
-        { label: 'Report issue', description: 'Open support ticket referencing this job.', icon: 'bi-exclamation-octagon' },
+      dataTable('customer-bookings-table', 'Your sessions', [
+        { label: 'When', key: 'when' },
+        { label: 'Studio', key: 'studio' },
+        { label: 'Room', key: 'room' },
+        { label: 'Status', key: 'status', align: 'right' },
+      ], [
+        { when: 'Thu · 18:20', studio: 'Mayfair', room: 'Lux 3', status: 'Confirmed' },
+        { when: 'Fri · Flex', studio: 'Shoreditch', room: 'Lux 2', status: 'Waitlisted (#3)' },
+      ]),
+      statusList('customer-bookings-policy', 'Policy reminders', [
+        { label: 'Cancellations', value: 'Free up to 6h', hint: 'Wallet auto-refills', state: 'info' },
+        { label: 'Late arrival', value: '10 min grace', hint: 'Then waitlist engages', state: 'warning' },
+        { label: 'Health flag', value: 'Contact concierge', hint: 'If medication changes', state: 'danger' },
       ]),
     ],
   }),
   createCustomerPage({
-    key: 'customer.addresses',
-    route: '/customer/addresses',
-    title: 'Addresses',
-    description: 'CRUD interface for service locations and access instructions.',
-    highlights: [
-      { title: 'Access notes', description: 'Store door codes, concierge notes, and pet warnings with role-based visibility.' },
-      { title: 'Default toggles', description: 'Mark preferred address per plan or per booking.' },
-      { title: 'Map preview', description: 'Confirm pin placement and travel time impact when editing addresses.' },
-    ],
-  }),
-  createCustomerPage({
-    key: 'customer.billing',
-    route: '/customer/billing',
-    title: 'Billing',
-    description: 'Links to Stripe Customer Portal for payment methods and invoices.',
-    highlights: [
-      { title: 'Stripe Customer Portal', description: 'Launches hosted portal inside a modal with contextual copy.' },
-      { title: 'Flexible cadences', description: 'Switch between pay-per-visit or monthly autopay.' },
-      { title: 'Credit balance', description: 'Show referral credits and how they will apply to next invoice.' },
-    ],
-  }),
-  createCustomerPage({
-    key: 'customer.invoices',
-    route: '/customer/invoices',
-    title: 'Invoices',
-    description: 'List and download historical invoices.',
-    highlights: [
-      { title: 'Filters', description: 'Filter by status (paid, due, refunded).' },
-      { title: 'Exports', description: 'Download CSV or forward to accountant email.' },
-      { title: 'Dispute inline', description: 'Open disputes referencing invoice lines.' },
-    ],
+    key: 'customer.membership',
+    route: '/customer/membership',
+    title: 'Membership controls',
+    description: 'Swap plans, pause, or manage Solar Club perks.',
     sections: [
-      dataTable('customer-invoices-table', 'Invoices', [
-        { label: 'Invoice', key: 'inv' },
-        { label: 'Date', key: 'date' },
-        { label: 'Status', key: 'status' },
+      summary('customer-membership-plan', 'Current plan', [
+        { label: 'Plan', value: 'Glow Pro 20', delta: 'Renews 1 June' },
+        { label: 'Wallet rollover', value: '30 days', delta: 'Auto applies' },
+        { label: 'Guest passes', value: '2 left', delta: 'Refreshes quarterly' },
+      ]),
+      actionGrid('customer-membership-actions', 'Manage', [
+        { label: 'Pause membership', description: 'Freeze for travel or health.', icon: 'bi-pause-circle' },
+        { label: 'Upgrade to Solar Club', description: 'Unlock unlimited minutes.', icon: 'bi-stars' },
+        { label: 'Update perks', description: 'Switch playlists, scents, hydration kit.', icon: 'bi-sliders' },
+      ]),
+    ],
+  }),
+  createCustomerPage({
+    key: 'customer.payments',
+    route: '/customer/payments',
+    title: 'Billing & receipts',
+    description: 'Cards on file, Klarna schedules, and downloadable receipts.',
+    sections: [
+      dataTable('customer-payments-methods', 'Payment methods', [
+        { label: 'Card', key: 'card' },
+        { label: 'Type', key: 'type' },
+        { label: 'Status', key: 'status', align: 'right' },
+      ], [
+        { card: 'Amex •••• 9004', type: 'Primary', status: 'Default' },
+        { card: 'Klarna Pay in 3', type: 'Installment', status: 'Active' },
+      ]),
+      dataTable('customer-payments-invoices', 'Recent invoices', [
+        { label: 'Invoice', key: 'invoice' },
         { label: 'Amount', key: 'amount', align: 'right' },
+        { label: 'Status', key: 'status', align: 'right' },
       ], [
-        { inv: '#GL-1042', date: '02 Apr 2025', status: 'Paid', amount: '£142.00' },
-        { inv: '#GL-1037', date: '19 Mar 2025', status: 'Paid', amount: '£142.00' },
+        { invoice: '#INV-2481', amount: '£169', status: 'Paid' },
+        { invoice: '#INV-2475', amount: '£42', status: 'Refunded' },
       ]),
     ],
   }),
   createCustomerPage({
     key: 'customer.preferences',
     route: '/customer/preferences',
-    title: 'Preferences',
-    description: 'Control communications, language, and plan defaults.',
-    highlights: [
-      { title: 'Notification toggles', description: 'Email/SMS/push per event type.' },
-      { title: 'Language selection', description: 'Localise portal UI + notifications instantly.' },
-      { title: 'Cleaner requests', description: 'Choose “same cleaner” vs. “best availability”.' },
+    title: 'Experience preferences',
+    description: 'Tell the studio exactly how you like to glow.',
+    sections: [
+      checklist('customer-pref-checklist', 'Session settings', [
+        { label: 'Music palette', detail: 'Amber Drift · Vinyasa Flow · Off' },
+        { label: 'Scent + aromatherapy', detail: 'Citrus dawn with eucalyptus' },
+        { label: 'Hydration reminders', detail: 'SMS 30 min before + after' },
+        { label: 'Contraindications', detail: 'Notes on skin care, medication, or allergies' },
+      ]),
+      insights('customer-pref-sharing', 'Sharing controls', [
+        { title: 'Data with partners', description: 'Toggle which wellness partners can see your history.' },
+        { title: 'Creator mode', description: 'Allow studio to tag you when sharing content.' },
+        { title: 'Notifications', description: 'Choose push vs SMS for updates + promos.' },
+      ]),
     ],
   }),
   createCustomerPage({
-    key: 'customer.security',
-    route: '/customer/security',
-    title: 'Security',
-    description: 'View magic-link history, revoke sessions, and claim account.',
-    highlights: [
-      { title: 'Session list', description: 'Show device, browser, and location for each active login.' },
-      { title: 'Magic-link history', description: 'See when and where links were requested.' },
-      { title: 'Passwordless claim', description: 'Optional password creation for legacy billing systems.' },
+    key: 'customer.documents',
+    route: '/customer/documents',
+    title: 'Consents & documents',
+    description: 'Download waivers, lamp logs, and receipts in one vault.',
+    sections: [
+      dataTable('customer-docs-table', 'Files', [
+        { label: 'Document', key: 'document' },
+        { label: 'Updated', key: 'updated' },
+        { label: 'Action', key: 'action', align: 'right' },
+      ], [
+        { document: 'Health consent', updated: '9 May 2025', action: 'Download' },
+        { document: 'Lamp exposure log', updated: '9 May 2025', action: 'Download' },
+        { document: 'Invoice #INV-2481', updated: '8 May 2025', action: 'Download' },
+      ]),
     ],
   }),
   createCustomerPage({
     key: 'customer.support',
     route: '/customer/support',
-    title: 'Support',
-    description: 'Open/view tickets and chat with ops.',
-    highlights: [
-      { title: 'Ticket inbox', description: 'Threaded view with SLA timers and attachments.' },
-      { title: 'Live chat', description: 'Escalates to support role with context about plan + address.' },
-      { title: 'Self-serve suggestions', description: 'Suggest relevant help articles before starting a chat.' },
-    ],
+    title: 'Get support',
+    description: 'Message your Glow Guide, view open tickets, or book a call.',
+    skipSummary: true,
     sections: [
-      actionGrid('customer-support-actions', 'Support actions', [
-        { label: 'Open ticket', description: 'Send a structured request with job context.', icon: 'bi-inbox' },
-        { label: 'Start chat', description: 'Real-time chat staffed by support role.', icon: 'bi-chat-dots' },
-        { label: 'View policies', description: 'Key terms for refunds and cancellations.', icon: 'bi-journal-text' },
+      actionGrid('customer-support-actions', 'Support channels', [
+        { label: 'Chat concierge', description: 'Replies in under 4 minutes.', icon: 'bi-chat-dots' },
+        { label: 'Schedule call', description: 'Pick a time with the studio lead.', icon: 'bi-telephone' },
+        { label: 'View tickets', description: 'Track open questions or incidents.', icon: 'bi-inbox' },
+      ]),
+      insights('customer-support-faq', 'Popular questions', [
+        { title: 'How do I pause my wallet?', description: 'Use the Minutes tab, tap “Pause wallet”, choose a resume date.' },
+        { title: 'Can I bring a friend?', description: 'Glow Pro + Solar Club include guest passes — share from Dashboard.' },
+        { title: 'Refund timelines', description: 'Wallet credits apply instantly; card refunds take 3-5 business days.' },
       ]),
     ],
   }),

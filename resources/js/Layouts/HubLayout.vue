@@ -6,7 +6,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container-fluid px-3">
-        <a class="navbar-brand" href="/hub"><img :src="whiteLogo" alt="Glint Labs" /></a>
+        <a class="navbar-brand" href="/hub"><img :src="whiteLogo" alt="Lux Tanning" /></a>
         <button class="burger d-lg-none" :class="{ open: drawerOpen }" @click="toggleDrawer" aria-label="Toggle menu"><span></span><span></span><span></span></button>
         <div class="collapse navbar-collapse justify-content-end d-none d-lg-flex">
           <ul class="navbar-nav align-items-lg-center">
@@ -25,7 +25,7 @@
     <div class="drawer-overlay d-lg-none" v-if="drawerOpen" @click="toggleDrawer(false)"></div>
     <aside class="drawer d-lg-none" :class="{ open: drawerOpen }">
       <div class="drawer-header d-flex align-items-center justify-content-between">
-        <a href="/hub" class="d-inline-flex align-items-center text-decoration-none"><img :src="whiteLogo" alt="Glint Labs" /></a>
+        <a href="/hub" class="d-inline-flex align-items-center text-decoration-none"><img :src="whiteLogo" alt="Lux Tanning" /></a>
         <button class="burger small open" @click="toggleDrawer(false)"><span></span><span></span><span></span></button>
       </div>
       <nav class="drawer-menu">
@@ -48,7 +48,7 @@
                 <div class="avatar me-2"><i class="bi bi-person"></i></div>
                 <div>
                   <div class="fw-bold">{{ $page?.props?.auth?.user?.name }}</div>
-                  <div class="text-muted small">Glint Labs Owner</div>
+                  <div class="text-muted small">Lux Platform Owner</div>
                 </div>
               </div>
               <nav class="menu">
@@ -76,7 +76,7 @@ import { resolveCsrfToken } from '../utils/csrf'
 export default {
   name: 'HubLayout',
   components: { Head },
-  data(){ return { whiteLogo:'https://cdn.shopify.com/s/files/1/0820/3947/2469/files/glint-favicon-black.jpg?v=1762130152', drawerOpen:false } },
+  data(){ return { whiteLogo:'/images/lux-logo.png', drawerOpen:false } },
   computed:{
     csrfToken(){
       return resolveCsrfToken(this.$page?.props)
@@ -112,8 +112,8 @@ export default {
 .navbar{ background:#0B0C0F; padding:.8rem 1.25rem; min-height:var(--nav-h) }
 .navbar-brand img{height:34px}
 .nav-link{ color:#fff!important; opacity:.9; margin-left:1rem }
-.nav-link:hover,.nav-link.active{ color:#4FE1C1!important; opacity:1 }
-.btn-ghost{ color:#0B0C0F; background:#fff; border-radius:999px; padding:.55rem 1rem; font-weight:600 }
+.nav-link:hover,.nav-link.active{ color:#FF8C43!important; opacity:1 }
+.btn-ghost{ color:#0C0714; background:#fbe9dd; border-radius:999px; padding:.55rem 1rem; font-weight:600 }
 .burger{ position:relative; width:42px; height:42px; border:none; background:transparent; display:inline-flex; align-items:center; justify-content:center; margin-left:auto; cursor:pointer }
 .burger span{ position:absolute; width:22px; height:2px; background:#fff; border-radius:2px; transition:transform .25s, opacity .2s, top .25s }
 .burger span:nth-child(1){ top:14px } .burger span:nth-child(2){ top:20px } .burger span:nth-child(3){ top:26px }
@@ -128,8 +128,8 @@ export default {
 .dash-aside{ position:sticky; top:var(--nav-h); margin-top:0; height:calc(100vh - var(--nav-h)); border-right:1px solid #E9EAF0; border-radius:0; padding:20px 16px; background:#fff; box-shadow:none; display:flex; flex-direction:column; gap:16px; overflow-y:auto; max-width:250px; margin-bottom:0!important }
 .dash-aside .menu{ display:flex; flex-direction:column; gap:6px }
 .dash-aside .menu-link{ display:flex; align-items:center; gap:.25rem; padding:.55rem .75rem; border-radius:10px; text-decoration:none; color:#0B0C0F; border:1px solid transparent }
-.dash-aside .menu-link:hover{ background:rgba(79,225,193,.06); border-color:rgba(79,225,193,.35) }
-.dash-aside .menu-link.active{ background:rgba(79,225,193,.12); border-color:rgba(79,225,193,.45) }
+.dash-aside .menu-link:hover{ background:rgba(255,140,67,.08); border-color:rgba(255,140,67,.35) }
+.dash-aside .menu-link.active{ background:rgba(255,140,67,.14); border-color:rgba(255,140,67,.5) }
 .aside--admin{ flex:0 0 15%; max-width:15%; }
 
 /* Ensure page content clears fixed navbar */

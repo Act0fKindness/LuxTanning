@@ -1,120 +1,151 @@
 import { definePage } from '../registry'
-import { summary, insights, dataTable, actionGrid } from '../helpers'
+import { summary, dataTable, actionGrid, checklist, insights } from '../helpers'
 
-const summaryDefaults = [
-  { label: 'Invoices due', value: '38', delta: '£12.4k outstanding' },
-  { label: 'Payouts pending', value: '£28k', delta: 'Next run Fri' },
-  { label: 'Disputes open', value: '7', delta: '3 due today' },
+const financeSummary = [
+  { label: 'Gross sales (7d)', value: '£118k', delta: '+6% vs prior' },
+  { label: 'Refunds', value: '£2.8k', delta: '2.4%' },
+  { label: 'Fees', value: '£4.1k', delta: '3.5%' },
 ]
 
-const createAccountantPage = input => ({
-  key: input.key,
-  route: input.route,
+const createAccountantPage = spec => ({
+  key: spec.key,
+  route: spec.route,
   layout: 'workspace',
   role: 'accountant',
-  badge: 'Finance desk',
-  title: input.title,
-  description: input.description,
+  badge: 'Finance suite',
+  title: spec.title,
+  description: spec.description,
   sections: [
-    summary(`${input.key}-summary`, 'Finance snapshot', summaryDefaults),
-    insights(`${input.key}-insights`, 'Controls', input.highlights),
-    ...(input.sections || []),
+    summary(`${spec.key}-summary`, 'Finance pulse', spec.summaryCards || financeSummary),
+    ...(spec.sections || []),
   ],
 })
 
 const accountantPages = [
   createAccountantPage({
-    key: 'accountant.invoices',
-    route: '/accountant/invoices',
-    title: 'Invoices',
-    description: 'List/filter invoices, resend, refund.',
-    highlights: [
-      { title: 'Filters & tags', description: 'Status, tenant, payment method, customer.' },
-      { title: 'Bulk resend', description: 'Select invoices to resend to contacts.' },
-      { title: 'Refund shortcuts', description: 'Initiate partial/full refunds with approvals.' },
-    ],
+    key: 'accountant.overview',
+    route: '/accountant/overview',
+    title: 'Revenue pulse',
+    description: 'Sales, refunds, tips, and exposure credits at a glance.',
     sections: [
-      dataTable('accountant-invoice-table', 'Recent invoices', [
-        { label: 'Invoice', key: 'id' },
-        { label: 'Customer', key: 'customer' },
-        { label: 'Status', key: 'status' },
+      dataTable('accountant-overview-metrics', 'Breakdown', [
+        { label: 'Stream', key: 'stream' },
         { label: 'Amount', key: 'amount', align: 'right' },
+        { label: 'Trend', key: 'trend', align: 'right' },
       ], [
-        { id: '#INV-1093', customer: 'Priya', status: 'Paid', amount: '£142.00' },
-        { id: '#INV-1092', customer: 'Marcus', status: 'Due', amount: '£98.00' },
+        { stream: 'Courses', amount: '£92k', trend: '+9%' },
+        { stream: 'Retail & boosters', amount: '£14k', trend: '+12%' },
+        { stream: 'Membership fees', amount: '£12k', trend: '+3%' },
       ]),
-    ],
-  }),
-  createAccountantPage({
-    key: 'accountant.payments',
-    route: '/accountant/payments',
-    title: 'Payments',
-    description: 'Transactions, declines, retries.',
-    highlights: [
-      { title: 'Live ledger', description: 'All card/bank transactions with status.' },
-      { title: 'Retry controls', description: 'Trigger retries or send pay links.' },
-      { title: 'Decline reasons', description: 'Group by failure reason to fix underlying issues.' },
+      actionGrid('accountant-overview-actions', 'Actions', [
+        { label: 'Lock period', description: 'Close books for last week and generate summary.', icon: 'bi-lock' },
+        { label: 'Push to ERP', description: 'Sync ledger entries to Xero/NetSuite.', icon: 'bi-cloud-arrow-up' },
+        { label: 'Trigger forecast', description: 'Update cash model with latest run rate.', icon: 'bi-graph-up' },
+      ]),
     ],
   }),
   createAccountantPage({
     key: 'accountant.payouts',
     route: '/accountant/payouts',
     title: 'Payouts',
-    description: 'Reconciliation with Stripe transfers.',
-    highlights: [
-      { title: 'Transfer view', description: 'Match jobs to Stripe transfers.' },
-      { title: 'Fees detail', description: 'Break out platform fees, refunds, adjustments.' },
-      { title: 'Export', description: 'Push to accounting system.' },
+    description: 'Stripe & Klarna settlements, payroll batches, and vendor wires.',
+    sections: [
+      dataTable('accountant-payouts-table', 'Upcoming payouts', [
+        { label: 'Date', key: 'date' },
+        { label: 'Type', key: 'type' },
+        { label: 'Amount', key: 'amount', align: 'right' },
+        { label: 'Status', key: 'status', align: 'right' },
+      ], [
+        { date: '10 May', type: 'Stripe', amount: '£42,100', status: 'Scheduled' },
+        { date: '11 May', type: 'Payroll', amount: '£18,430', status: 'Draft' },
+        { date: '12 May', type: 'Vendor – Lamps', amount: '£6,850', status: 'Needs approval' },
+      ]),
+      checklist('accountant-payouts-checklist', 'Before approving', [
+        { label: 'Match to ledger', detail: 'Ensure payout reconciles to net sales.' },
+        { label: 'Fees accounted', detail: 'Include Stripe/Klarna fees + adjustments.' },
+        { label: 'Cash buffer', detail: 'Warn if payout would dip below policy.' },
+      ]),
     ],
   }),
   createAccountantPage({
-    key: 'accountant.taxes',
-    route: '/accountant/taxes',
-    title: 'Taxes',
-    description: 'VAT rates, reports, exports.',
-    highlights: [
-      { title: 'Rate library', description: 'Configure per jurisdiction.' },
-      { title: 'Return builder', description: 'Aggregate taxable revenue by period.' },
-      { title: 'Evidence kit', description: 'Store exemption evidence or customer VAT IDs.' },
+    key: 'accountant.reconciliation',
+    route: '/accountant/reconciliation',
+    title: 'Reconciliation',
+    description: 'Match bank deposits to Lux ledgers, highlight gaps.',
+    sections: [
+      dataTable('accountant-recon-breaks', 'Breaks', [
+        { label: 'Reference', key: 'ref' },
+        { label: 'Amount', key: 'amount', align: 'right' },
+        { label: 'Reason', key: 'reason' },
+        { label: 'Status', key: 'status', align: 'right' },
+      ], [
+        { ref: 'PAYOUT-5881', amount: '£-312', reason: 'Pending refund', status: 'Resolving' },
+        { ref: 'CARD-4428', amount: '£+64', reason: 'Tip included twice', status: 'Manual' },
+      ]),
+      actionGrid('accountant-recon-actions', 'Tools', [
+        { label: 'Auto-match', description: 'Run machine match between bank + ledger.', icon: 'bi-magic' },
+        { label: 'Export adjustments', description: 'Send diff file for review.', icon: 'bi-filetype-csv' },
+        { label: 'Flag suspicious', description: 'Escalate to owner or support with context.', icon: 'bi-shield' },
+      ]),
     ],
   }),
   createAccountantPage({
-    key: 'accountant.adjustments',
-    route: '/accountant/adjustments',
-    title: 'Adjustments',
-    description: 'Credits/debits ledger.',
-    highlights: [
-      { title: 'Ledger filters', description: 'Find adjustments by user or customer.' },
-      { title: 'Bulk adjustments', description: 'Apply credits to groups.' },
-      { title: 'Audit log', description: 'Every change tracked with approvals.' },
+    key: 'accountant.fees',
+    route: '/accountant/fees',
+    title: 'Fees & taxes',
+    description: 'Stripe/Klarna fees, VAT, payroll tax, and lamp depreciation modelling.',
+    sections: [
+      dataTable('accountant-fees-table', 'Current obligations', [
+        { label: 'Type', key: 'type' },
+        { label: 'Amount', key: 'amount', align: 'right' },
+        { label: 'Due', key: 'due' },
+      ], [
+        { type: 'VAT (UK)', amount: '£24,110', due: '31 May' },
+        { type: 'Stripe fees', amount: '£4,130', due: 'Settled daily' },
+        { type: 'Lamp depreciation', amount: '£3,420', due: 'Non-cash' },
+      ]),
+      insights('accountant-fees-insights', 'Optimisations', [
+        { title: 'Klarna incentives', description: 'Reduced fees when >£40k/mo processed.' },
+        { title: 'Lamp write-off schedule', description: 'Align depreciation with new Solar Club lounge investment.' },
+      ]),
     ],
   }),
   createAccountantPage({
     key: 'accountant.disputes',
     route: '/accountant/disputes',
-    title: 'Disputes',
-    description: 'Chargeback handling and evidence upload.',
-    highlights: [
-      { title: 'Deadline tracker', description: 'Keep track of response deadlines.' },
-      { title: 'Evidence templates', description: 'Checklist for photos, checklists, comms.' },
-      { title: 'Coordinate with owners', description: 'Loop in owner for high-value disputes.' },
+    title: 'Disputes & refunds',
+    description: 'Chargebacks, partial refunds, and goodwill credits.',
+    sections: [
+      dataTable('accountant-disputes-table', 'Open disputes', [
+        { label: 'Case', key: 'case' },
+        { label: 'Guest', key: 'guest' },
+        { label: 'Amount', key: 'amount', align: 'right' },
+        { label: 'Due', key: 'due' },
+      ], [
+        { case: 'CB-2218', guest: 'Isla Rose', amount: '£169', due: '12 May' },
+        { case: 'CB-2219', guest: 'Kai Hart', amount: '£89', due: '14 May' },
+      ]),
+      actionGrid('accountant-disputes-actions', 'Resolution toolkit', [
+        { label: 'Attach evidence', description: 'Pull consent + lamp logs automatically.', icon: 'bi-paperclip' },
+        { label: 'Issue partial credit', description: 'Credit minutes or cash with approvals.', icon: 'bi-piggy-bank' },
+        { label: 'Escalate to support', description: 'Loop in concierge for white-glove handling.', icon: 'bi-life-preserver' },
+      ]),
     ],
   }),
   createAccountantPage({
-    key: 'accountant.exports',
-    route: '/accountant/exports',
-    title: 'Exports',
-    description: 'Generate CSVs for accounting systems.',
-    highlights: [
-      { title: 'Scheduled exports', description: 'Automate weekly/monthly pushes.' },
-      { title: 'QuickBooks/Xero', description: 'Direct integration support.' },
-      { title: 'Custom fields', description: 'Map Glint data to accounting fields.' },
-    ],
+    key: 'accountant.export',
+    route: '/accountant/export',
+    title: 'Exports & audit kit',
+    description: 'Download journals, tax-ready summaries, and supporting docs.',
     sections: [
-      actionGrid('accountant-export-actions', 'Export templates', [
-        { label: 'Sales journal', description: 'Invoices + payments summary.', icon: 'bi-file-earmark-spreadsheet' },
-        { label: 'Payout reconciliation', description: 'Stripe transfers vs. ledger.', icon: 'bi-bank' },
-        { label: 'Tax report', description: 'VAT-ready CSV.', icon: 'bi-percent' },
+      actionGrid('accountant-export-actions', 'Available exports', [
+        { label: 'Daily journal', description: 'CSV + JSON for ERP import.', icon: 'bi-file-earmark-spreadsheet' },
+        { label: 'VAT summary', description: 'Per region with evidence links.', icon: 'bi-receipt' },
+        { label: 'Audit bundle', description: 'Encrypted package with consents + payouts.', icon: 'bi-archive' },
+      ]),
+      checklist('accountant-export-checklist', 'Best practices', [
+        { label: 'Rotate access keys', detail: 'Exports expire in 24h.' },
+        { label: 'Track downloads', detail: 'All exports logged in audit trail.' },
       ]),
     ],
   }),

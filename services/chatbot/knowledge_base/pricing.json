@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Course of 6",
+    "price": "£120",
+    "details": "Includes six 20-minute max sessions, valid for 60 days."
+  },
+  {
+    "name": "Unlimited week",
+    "price": "£75",
+    "details": "One session per day, staff approval required."
+  },
+  {
+    "name": "Top-up pack",
+    "price": "£30",
+    "details": "Adds 30 wallet minutes that never expire while your account remains active."
+  }
+]

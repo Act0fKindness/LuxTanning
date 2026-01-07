@@ -1,20 +1,20 @@
 <template>
   <PublicLayout :use-tenant-branding="true">
-    <Head title="Track a booking" />
+    <Head title="Track your Lux session" />
     <div class="track-page">
       <section class="track-hero">
         <p class="track-hero__eyebrow">Live tracking</p>
-        <h1>Track your booking</h1>
-        <p>Enter your booking number, the name on the booking, and the service postcode to see your cleaner on the map.</p>
+        <h1>Track your Lux session</h1>
+        <p>Enter your confirmation details to see your Glow Guide, lamp status, and ETA in real time.</p>
       </section>
 
       <div class="track-grid">
         <section class="track-card">
-          <h2>Find your booking</h2>
+          <h2>Find your session</h2>
           <form class="track-form" @submit.prevent="submit">
             <label class="track-field">
               <span>Booking number</span>
-              <input v-model="form.booking_number" type="text" placeholder="GLNT-ABC123" autocomplete="off" />
+              <input v-model="form.booking_number" type="text" placeholder="LUX-ABC123" autocomplete="off" />
               <small v-if="form.errors.booking_number" class="error">{{ form.errors.booking_number }}</small>
             </label>
             <label class="track-field">
@@ -28,11 +28,11 @@
               <small v-if="form.errors.postal_code" class="error">{{ form.errors.postal_code }}</small>
             </label>
             <button type="submit" class="btn-primary" :disabled="form.processing">
-              <span v-if="!form.processing">Track booking</span>
+              <span v-if="!form.processing">Track session</span>
               <span v-else>Searching…</span>
             </button>
           </form>
-          <p class="help-text">Need help finding your booking number? Check your confirmation email or SMS.</p>
+          <p class="help-text">Need help finding your booking number? Check your Lux confirmation email or SMS.</p>
         </section>
 
         <section v-if="result" class="track-card result-card">
@@ -60,8 +60,8 @@
           <TrackBookingMap :api-key="googleMapsKey" :destination="result.map.destination" :latest-ping="result.map.latestPing" />
           <div class="map-meta">
             <div>
-              <p class="label">Cleaner</p>
-              <p class="value">{{ cleanerCopy }}</p>
+              <p class="label">Glow Guide</p>
+              <p class="value">{{ guideCopy }}</p>
             </div>
             <div v-if="result.map.latestPing">
               <p class="label">Last ping</p>
@@ -86,7 +86,7 @@
 
       <section v-else-if="hasSearched" class="track-card empty-state">
         <p>{{ notFoundMessage || 'We could not find a booking with those details.' }}</p>
-        <p>Double-check the spelling and postcode or contact your cleaning team for help.</p>
+        <p>Double-check the spelling and postcode or contact your studio team for help.</p>
       </section>
     </div>
   </PublicLayout>
@@ -136,10 +136,10 @@ const windowCopy = computed(() => {
   return start || end || 'Awaiting ETA'
 })
 
-const cleanerCopy = computed(() => {
+const guideCopy = computed(() => {
   const staff = result.value?.job?.staff
   if (staff?.name) return staff.name
-  return result.value?.tenant?.name || 'Your cleaner'
+  return result.value?.tenant?.name || 'Lux team member'
 })
 
 const lastPingCopy = computed(() => {

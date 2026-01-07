@@ -1,383 +1,318 @@
 import { definePage } from '../registry'
-import { summary, insights, kanban, dataTable, mapPanel, timeline, actionGrid } from '../helpers'
+import { summary, insights, dataTable, actionGrid, timeline, statusList, checklist, mapPanel } from '../helpers'
 
-const baseSummary = [
-  { label: 'Jobs today', value: '184', delta: '26 unassigned' },
-  { label: 'On-time rate', value: '94%', delta: 'Target 96%' },
-  { label: 'Open incidents', value: '5', delta: 'Escalated to support' },
+const opsSummary = [
+  { label: 'Occupancy today', value: '94%', delta: '2 rooms cooling' },
+  { label: 'Waitlist', value: '36 guests', delta: 'Avg move 14m' },
+  { label: 'Retail attach', value: '31%', delta: '+6 vs last week' },
 ]
 
-const createManagerPage = input => ({
-  key: input.key,
-  route: input.route,
+const createManagerPage = spec => ({
+  key: spec.key,
+  route: spec.route,
   layout: 'workspace',
   role: 'manager',
-  badge: input.badge || 'Manager console',
-  title: input.title,
-  description: input.description,
+  badge: 'Studio operations',
+  title: spec.title,
+  description: spec.description,
   sections: [
-    summary(`${input.key}-summary`, 'Operational pulse', input.summaryCards || baseSummary),
-    insights(`${input.key}-insights`, 'Tooling highlights', input.highlights),
-    ...(input.sections || []),
+    summary(`${spec.key}-summary`, 'Operational pulse', spec.summaryCards || opsSummary),
+    ...(spec.sections || []),
   ],
 })
 
-const dispatchPages = [
+const managerPages = [
   createManagerPage({
-    key: 'manager.dispatch.board',
-    route: '/manager/dispatch/board',
-    title: 'Dispatch board',
-    description: 'Day/week calendar with drag-assign, unassigned queue, and conflict alerts.',
-    highlights: [
-      { title: 'Drag + drop scheduling', description: 'Move jobs across cleaners or days with SLA checks.' },
-      { title: 'Unassigned queue', description: 'Queue for new/failed jobs with suggestions for best cleaner.' },
-      { title: 'At-risk badges', description: 'Late/overlap warnings inline before saving.' },
-    ],
+    key: 'manager.overview',
+    route: '/manager/overview',
+    title: 'Studio overview',
+    description: 'Occupancy, lamp health, campaigns, and staff load in one glance.',
     sections: [
-      kanban('manager-dispatch-kanban', 'Workload snapshot', [
-        { title: 'Unassigned', items: [ { title: '#1245 Deep clean', detail: '2h · North', assignee: 'Suggested: Maya' } ] },
-        { title: 'Assigned', items: [ { title: '#1239 Weekly clean', detail: 'Leo · 10:00', assignee: 'On time' } ] },
-        { title: 'At risk', items: [ { title: '#1234 Move-out', detail: 'Lena · 30m late', assignee: 'Need reroute' } ] },
+      actionGrid('manager-overview-actions', 'Immediate actions', [
+        { label: 'Open slot broadcast', description: 'Notify waitlisted guests automatically.', icon: 'bi-broadcast-pin' },
+        { label: 'Escalate lamp issue', description: 'Ping owner + maintenance with lamp data.', icon: 'bi-exclamation-triangle' },
+        { label: 'Drop new promo', description: 'Push hydration booster promo for off-peak hours.', icon: 'bi-megaphone' },
+      ]),
+      statusList('manager-overview-status', 'Studios', [
+        { label: 'Mayfair', value: '98% full', hint: 'Solar Club night', state: 'success' },
+        { label: 'Shoreditch', value: 'Slots at 15:30', hint: 'Push waitlist', state: 'warning' },
+        { label: 'Manchester', value: 'Lamp service 18:00', hint: 'Room 4 offline', state: 'danger' },
       ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.dispatch.routes',
-    route: '/manager/dispatch/routes',
-    title: 'Route builder',
-    description: 'Build/optimise routes with constraints, travel time, and fuel estimation.',
-    highlights: [
-      { title: 'Multi-stop optimizer', description: 'Balance travel vs. job duration with fairness settings.' },
-      { title: 'Constraints', description: 'Support shift windows, cleaner skills, and vehicle capacity.' },
-      { title: 'Map preview', description: 'Overlay route with live traffic and distance metrics.' },
-    ],
+    key: 'manager.calendar',
+    route: '/manager/calendar',
+    title: 'Calendar & drag board',
+    description: 'Drag-and-drop bookings, view lamp cooldown buffers, and auto-text guests when moving them.',
     sections: [
-      mapPanel('manager-routes-map', 'Route preview', [
-        { title: 'Cleaner route', detail: '6 stops • 14 miles', lat: 51.509, lng: -0.1, state: 'info' },
-        { title: 'High priority job', detail: '#1242', lat: 51.503, lng: -0.08, state: 'warning' },
+      timeline('manager-calendar-flow', 'Today’s flow', [
+        { title: 'Dawn kit', time: '06:00', detail: 'Prep + cleaning due', state: 'info' },
+        { title: 'Event block', time: '12:30', detail: 'Team from Neon Agency', state: 'warning' },
+        { title: 'Lamp maintenance', time: '18:00', detail: 'Room 4 offline 20m', state: 'danger' },
+      ]),
+      actionGrid('manager-calendar-actions', 'Board controls', [
+        { label: 'Flex slot', description: 'Expand or shrink exposures from board view.', icon: 'bi-arrows-expand' },
+        { label: 'Bulk move', description: 'Select multiple bookings and shift in one action.', icon: 'bi-shuffle' },
+        { label: 'Lock room', description: 'Prevent drag if lamp warming.', icon: 'bi-lock' },
       ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.dispatch.exceptions',
-    route: '/manager/dispatch/exceptions',
-    title: 'Exceptions',
-    description: 'Late/at-risk list with reroute tools.',
-    highlights: [
-      { title: 'Exception feed', description: 'Ranked list of jobs at risk with recommended actions.' },
-      { title: 'One-click reroute', description: 'Reassign to standby cleaners or split jobs.' },
-      { title: 'Customer notification', description: 'Notify customers with templated updates.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.dispatch.bulk',
-    route: '/manager/dispatch/bulk',
-    title: 'Bulk scheduling',
-    description: 'Create/shift/skip multiple jobs at once.',
-    highlights: [
-      { title: 'Spreadsheet import', description: 'Upload CSV or copy/paste from Excel.' },
-      { title: 'Bulk edit wizard', description: 'Shift, cancel, or duplicate sets of jobs with policy guardrails.' },
-      { title: 'Preview diff', description: 'See final changes before committing.' },
-    ],
-  }),
-]
-
-const jobPages = [
-  createManagerPage({
-    key: 'manager.jobs.list',
-    route: '/manager/jobs',
-    title: 'Jobs',
-    description: 'List/filter jobs by status, date, cleaner, or customer.',
-    highlights: [
-      { title: 'Power filters', description: 'Status, tags, cleaners, addresses, or timeframe.' },
-      { title: 'Batch actions', description: 'Select multiple jobs for assign/reschedule.' },
-      { title: 'Export CSV', description: 'Send to ops analytics or share externally.' },
-    ],
+    key: 'manager.waitlist',
+    route: '/manager/waitlist',
+    title: 'Waitlist intelligence',
+    description: 'Rank guests by membership, tone goal, and predicted show-up probability.',
     sections: [
-      dataTable('manager-jobs-table', 'Jobs today', [
-        { label: 'Job', key: 'job' },
-        { label: 'Customer', key: 'customer' },
-        { label: 'Cleaner', key: 'cleaner' },
+      dataTable('manager-waitlist-table', 'Active waitlists', [
+        { label: 'Guest', key: 'guest' },
+        { label: 'Studio', key: 'studio' },
+        { label: 'Priority', key: 'priority' },
+        { label: 'ETA', key: 'eta', align: 'right' },
+      ], [
+        { guest: 'Jade Lee', studio: 'Shoreditch', priority: 'Solar Club · VIP', eta: '10m' },
+        { guest: 'Mia Ford', studio: 'Mayfair', priority: 'Glow Pro', eta: '15m' },
+      ]),
+      insights('manager-waitlist-logic', 'Automation rules', [
+        { title: 'Health guardrails', description: 'Only auto-fill if cooldown met + lamp temperature < threshold.' },
+        { title: 'Membership weighting', description: 'Solar Club > Glow Pro > Dawn, but upcoming birthdays override.' },
+        { title: 'No-shows', description: 'Three strikes auto-downgrades priority until reviewed.' },
+      ]),
+    ],
+  }),
+  createManagerPage({
+    key: 'manager.multiroom',
+    route: '/manager/multiroom',
+    title: 'Multi-room monitor',
+    description: 'Live map of every bed, lamp, and staff assignment.',
+    sections: [
+      mapPanel('manager-multiroom-map', 'Studios map', [
+        { title: 'Mayfair', detail: 'Occupancy 98%', lat: 51.511, lng: -0.143, state: 'success' },
+        { title: 'Shoreditch', detail: 'Room 2 cooling', lat: 51.526, lng: -0.078, state: 'warning' },
+        { title: 'Manchester', detail: 'Room 4 offline', lat: 53.484, lng: -2.242, state: 'danger' },
+      ], 'Click through to drill into rooms.'),
+      statusList('manager-multiroom-rooms', 'Room status', [
+        { label: 'Room 1', value: 'Guest inside', hint: '5m remaining', state: 'success' },
+        { label: 'Room 2', value: 'Cooling', hint: 'Ready in 4m', state: 'warning' },
+        { label: 'Room 4', value: 'Maintenance', hint: 'Lamp swap scheduled', state: 'danger' },
+      ]),
+    ],
+  }),
+  createManagerPage({
+    key: 'manager.courses',
+    route: '/manager/courses',
+    title: 'Course designer',
+    description: 'Launch new bundles with exposure curves, pricing, and availability controls.',
+    sections: [
+      dataTable('manager-courses-table', 'Active courses', [
+        { label: 'Course', key: 'course' },
+        { label: 'Sessions', key: 'sessions' },
+        { label: 'Price', key: 'price', align: 'right' },
         { label: 'Status', key: 'status', align: 'right' },
       ], [
-        { job: '#1241 · Weekly clean', customer: 'Priya', cleaner: 'Leo', status: 'Scheduled' },
-        { job: '#1242 · Deep clean', customer: 'Marcus', cleaner: 'Maya', status: 'At risk' },
+        { course: 'Dawn Reset', sessions: '4', price: '£89', status: 'Live' },
+        { course: 'Glow Pro 20', sessions: '8', price: '£169', status: 'Live' },
+        { course: 'Solar Club', sessions: 'Unlimited', price: '£289', status: 'Waitlist' },
+      ]),
+      actionGrid('manager-courses-actions', 'Builder steps', [
+        { label: 'Exposure curve', description: 'Define safe start/end minutes by skin tone.', icon: 'bi-activity' },
+        { label: 'Bundles & perks', description: 'Attach hydration kit, playlists, scent packages.', icon: 'bi-bag-heart' },
+        { label: 'Eligibility', description: 'Gate by membership, studio, or certification.', icon: 'bi-shield-check' },
       ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.jobs.new',
-    route: '/manager/jobs/new',
-    title: 'Create job',
-    description: 'Create one-off or series with templates.',
-    highlights: [
-      { title: 'Series builder', description: 'Define cadence, end date, and skip rules.' },
-      { title: 'Template picker', description: 'Load standard checklists and add-ons per service type.' },
-      { title: 'Availability preview', description: 'See best slots before confirming.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.jobs.detail',
-    route: '/manager/jobs/:jobId',
-    title: 'Job detail',
-    description: 'Edit job details, add-ons, time windows, notes.',
-    highlights: [
-      { title: 'Audit trail', description: 'Every change logged with user + timestamp.' },
-      { title: 'Time window control', description: 'Set primary/secondary windows with travel validation.' },
-      { title: 'Add-on store', description: 'Upsell extras or change pricing on the fly.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.checklists',
-    route: '/manager/checklists',
-    title: 'Checklists',
-    description: 'Template library for service scopes.',
-    highlights: [
-      { title: 'Template versions', description: 'Version history with effective dates.' },
-      { title: 'Role visibility', description: 'Choose which roles can see each step.' },
-      { title: 'Media hints', description: 'Attach reference photos or instructions.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.addons',
-    route: '/manager/addons',
-    title: 'Add-ons catalog',
-    description: 'Manage add-on pricing, durations, and availability.',
-    highlights: [
-      { title: 'Duration overrides', description: 'Adjust labour time per add-on.' },
-      { title: 'Eligibility', description: 'Limit add-ons to property size or plan type.' },
-      { title: 'Promotions', description: 'Attach coupons or thresholds.' },
-    ],
-  }),
-]
-
-const livePages = [
-  createManagerPage({
-    key: 'manager.live.map',
-    route: '/manager/live/map',
-    title: 'Live map',
-    description: 'See cleaners on a map with active jobs and ETAs.',
-    highlights: [
-      { title: 'Fleet view', description: 'Color-coded pins for on-time vs. late vs. idle.' },
-      { title: 'Job overlays', description: 'Display job windows and customer notes.' },
-      { title: 'Heatmaps', description: 'Optionally show demand hotspots.' },
-    ],
+    key: 'manager.bundles',
+    route: '/manager/bundles',
+    title: 'Product bundles & promotions',
+    description: 'Mix retail, boosters, and courses into shoppable kits.',
     sections: [
-      mapPanel('manager-live-map', 'Tracking', [
-        { title: 'Cleaner Maya', detail: 'On time · Job #1241', lat: 51.513, lng: -0.09, state: 'success' },
-        { title: 'Cleaner Leo', detail: 'Running late 12m', lat: 51.52, lng: -0.07, state: 'warning' },
+      insights('manager-bundles-insights', 'Featured bundles', [
+        { title: 'Hydration Lab', description: 'Serum + electrolyte kit auto-suggested for Dawn.' },
+        { title: 'Creator Day', description: 'Guest pass + recorded content package with MUA.' },
+      ]),
+      checklist('manager-bundles-checklist', 'Launch requirements', [
+        { label: 'Inventory par levels', detail: 'Ensure stock across studios before pushing live.' },
+        { label: 'Commission split', detail: 'Set who earns what (staff vs HQ).' },
+        { label: 'Tracking tags', detail: 'Tag campaign for analytics + payouts.' },
       ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.live.timeline',
-    route: '/manager/live/timeline',
-    title: 'Live timeline',
-    description: 'Status feed of en-route, started, paused, completed events.',
-    highlights: [
-      { title: 'Filterable feed', description: 'Filter by cleaner, customer, or alert type.' },
-      { title: 'Resync controls', description: 'Force tracker resend if heartbeat missing.' },
-      { title: 'Escalation buttons', description: 'Ping support or owner when something drifts.' },
-    ],
+    key: 'manager.stock',
+    route: '/manager/stock',
+    title: 'Stock & lamp supplies',
+    description: 'Real-time inventory, restock alerts, and vendor POs.',
     sections: [
-      timeline('manager-live-events', 'Events', [
-        { title: 'Job #1241 started', time: '09:02', detail: 'Maya on site', state: 'success' },
-        { title: 'Job #1238 paused', time: '09:15', detail: 'Waiting for access', state: 'warning' },
-        { title: 'Job #1235 completed', time: '09:20', detail: 'Photos uploaded', state: 'success' },
+      dataTable('manager-stock-table', 'Critical stock', [
+        { label: 'Item', key: 'item' },
+        { label: 'Location', key: 'location' },
+        { label: 'On hand', key: 'qty', align: 'right' },
+        { label: 'Status', key: 'status', align: 'right' },
+      ], [
+        { item: 'Hydration booster kits', location: 'Mayfair', qty: '23', status: 'Order pending' },
+        { item: 'Lamp set LUX-220', location: 'All', qty: '12', status: 'Healthy' },
+      ]),
+      actionGrid('manager-stock-actions', 'Ops', [
+        { label: 'Generate PO', description: 'Send vendor-ready PDF with lamp usage forecast.', icon: 'bi-receipt-cutoff' },
+        { label: 'Transfer stock', description: 'Move inventory between studios with courier tracking.', icon: 'bi-arrow-left-right' },
+        { label: 'Set par levels', description: 'Alert when boosters drop below threshold.', icon: 'bi-bell' },
       ]),
     ],
   }),
-]
-
-const customerPages = [
   createManagerPage({
-    key: 'manager.customers.list',
+    key: 'manager.compliance',
+    route: '/manager/compliance',
+    title: 'Compliance & health logs',
+    description: 'Contraindication attestations, lamp audits, and regulator exports.',
+    sections: [
+      statusList('manager-compliance-items', 'Checklist', [
+        { label: 'Consent forms', value: '100% captured', hint: 'Digital signatures per session', state: 'success' },
+        { label: 'Lamp inspections', value: 'Room 4 overdue', hint: 'Swap scheduled', state: 'danger' },
+        { label: 'Age verification', value: 'Auto via ID scan', hint: '24 flagged last month', state: 'warning' },
+      ]),
+      actionGrid('manager-compliance-actions', 'Exports & workflows', [
+        { label: 'Generate exposure log', description: 'Send daily CSV to regulators.', icon: 'bi-file-earmark-spreadsheet' },
+        { label: 'Audit trail', description: 'Timeline of overrides + approvals.', icon: 'bi-clock-history' },
+        { label: 'Health alerts', description: 'Auto-notify when meds flagged for members.', icon: 'bi-heart-pulse' },
+      ]),
+    ],
+  }),
+  createManagerPage({
+    key: 'manager.customers',
     route: '/manager/customers',
-    title: 'Customers',
-    description: 'Searchable customer list with job + billing context.',
-    highlights: [
-      { title: '360° profile cards', description: 'Show plan, last job, and support status.' },
-      { title: 'Segment filters', description: 'Filter by cadence, tags, or lifecycle.' },
-      { title: 'Bulk messaging', description: 'Send announcements to filtered cohorts.' },
+    title: 'Customer intelligence',
+    description: 'Segment guests by plan, spend, and engagement.',
+    sections: [
+      dataTable('manager-customers-table', 'Members', [
+        { label: 'Member', key: 'member' },
+        { label: 'Plan', key: 'plan' },
+        { label: 'Minutes left', key: 'minutes', align: 'right' },
+        { label: 'Status', key: 'status', align: 'right' },
+      ], [
+        { member: 'Ava Kim', plan: 'Glow Pro', minutes: '82', status: 'Engaged' },
+        { member: 'Marcus Rao', plan: 'Dawn', minutes: '12', status: 'Top-up due' },
+      ]),
+      insights('manager-customers-actions', 'Playbooks', [
+        { title: 'Early upsell', description: 'Offer Solar Club to high CSAT + high usage members.' },
+        { title: 'Save from churn', description: 'Auto-nudge when wallet idle for 21 days.' },
+      ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.customers.detail',
-    route: '/manager/customers/:id',
-    title: 'Customer detail',
-    description: 'Profile, addresses, jobs, invoices, notes.',
-    highlights: [
-      { title: 'Interaction log', description: 'Every touchpoint recorded for context.' },
-      { title: 'Plan controls', description: 'Adjust cadence, add skips, pause/resume plans.' },
-      { title: 'Billing snapshot', description: 'See latest payment status and outstanding balances.' },
+    key: 'manager.membership',
+    route: '/manager/membership',
+    title: 'Membership controls',
+    description: 'Approve upgrades, manage perks, and view churn risk.',
+    sections: [
+      summary('manager-membership-stats', 'Membership numbers', [
+        { label: 'Solar Club', value: '248', delta: '+12 MoM' },
+        { label: 'Glow Pro', value: '1,642', delta: '+81' },
+        { label: 'Dawn', value: '612', delta: '-5' },
+      ]),
+      actionGrid('manager-membership-actions', 'Admin actions', [
+        { label: 'Approve upgrade', description: 'Review Solar Club waitlist apps.', icon: 'bi-check-circle' },
+        { label: 'Pause request', description: 'Pause membership for travel/health with schedule.', icon: 'bi-pause-circle' },
+        { label: 'Edit perks', description: 'Swap guest passes, refresh kits.', icon: 'bi-stars' },
+      ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.subscriptions',
-    route: '/manager/subscriptions',
-    title: 'Subscriptions',
-    description: 'Manage cadence, skips, and pauses for plans.',
-    highlights: [
-      { title: 'Skip tracker', description: 'Track auto-skips and manual pauses.' },
-      { title: 'Schedule preview', description: 'Show upcoming visits impacted by changes.' },
-      { title: 'Billing alignment', description: 'Sync plan changes with invoice cycles.' },
+    key: 'manager.marketing',
+    route: '/manager/marketing',
+    title: 'Marketing & campaigns',
+    description: 'Broadcast promos, collaborations, and referral pushes.',
+    sections: [
+      insights('manager-marketing-campaigns', 'Active campaigns', [
+        { title: 'Hydration May', description: '10% off boosters for midday slots.' },
+        { title: 'Creator Residency', description: 'Influencer takeover with referral codes.' },
+      ]),
+      actionGrid('manager-marketing-actions', 'Launch pads', [
+        { label: 'Segment push', description: 'Target by plan, waitlist, or minutes usage.', icon: 'bi-funnel' },
+        { label: 'Collab hub', description: 'Manage brand & creator partnerships.', icon: 'bi-handshake' },
+        { label: 'Measure impact', description: 'Realtime uplift tracked inside dashboard.', icon: 'bi-graph-up' },
+      ]),
     ],
   }),
-]
-
-const staffPages = [
   createManagerPage({
-    key: 'manager.staff.list',
+    key: 'manager.staff',
     route: '/manager/staff',
-    title: 'Staff',
-    description: 'Roster of cleaners/managers with availability and performance.',
-    highlights: [
-      { title: 'Availability matrix', description: 'See who is working which days.' },
-      { title: 'Device status', description: 'Monitor tracker heartbeat / app version.' },
-      { title: 'Performance', description: 'Show on-time %, CSAT, incidents.' },
+    title: 'Staff roster & performance',
+    description: 'Shift assignments, goals, and recognition all visible.',
+    sections: [
+      dataTable('manager-staff-table', 'Team roster', [
+        { label: 'Guide', key: 'guide' },
+        { label: 'Role', key: 'role' },
+        { label: 'Shift', key: 'shift' },
+        { label: 'Add-ons', key: 'addons', align: 'right' },
+      ], [
+        { guide: 'Maya', role: 'Lead', shift: '06:00–14:00', addons: '£180' },
+        { guide: 'Leo', role: 'Guide', shift: '10:00–18:00', addons: '£95' },
+      ]),
+      actionGrid('manager-staff-actions', 'People ops', [
+        { label: 'Assign mentor', description: 'Pair new hires with leads.', icon: 'bi-people' },
+        { label: 'Recognise stars', description: 'Auto-notify owner when goals hit.', icon: 'bi-award' },
+        { label: 'Shift swap', description: 'Approve swap with compliance checks.', icon: 'bi-arrow-left-right' },
+      ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.staff.detail',
-    route: '/manager/staff/:id',
-    title: 'Staff profile',
-    description: 'Profile, documents, time-off, performance.',
-    highlights: [
-      { title: 'Certifications', description: 'Store docs and expiry dates.' },
-      { title: 'Time-off calendar', description: 'Approve PTO and block scheduling conflicts.' },
-      { title: 'Device health', description: 'Check last login, OS version, and location permission.' },
+    key: 'manager.schedules',
+    route: '/manager/schedules',
+    title: 'Schedules & staffing',
+    description: 'Build schedules with lamp coverage, labour budgets, and skill tags.',
+    sections: [
+      timeline('manager-schedules-timeline', 'Week view', [
+        { title: 'Mon – Prep day', time: 'Staff 4', detail: 'Lamp swaps + cleaning', state: 'info' },
+        { title: 'Wed – Creator takeover', time: 'Staff 6', detail: 'Extra concierge needed', state: 'warning' },
+        { title: 'Sat – Solar Club night', time: 'Staff 8', detail: 'All hands, triple-check stock', state: 'danger' },
+      ]),
+      checklist('manager-schedules-checks', 'Before publishing', [
+        { label: 'Coverage vs bookings', detail: 'Ensure each slot has coverage + cooldown buffer.' },
+        { label: 'Skill mix', detail: 'At least one Lead + one Glow Guide per shift.' },
+        { label: 'Overtime alerts', detail: 'Auto-warn when hitting thresholds.' },
+      ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.shifts',
-    route: '/manager/shifts',
-    title: 'Shifts',
-    description: 'Capacity planning and time-off.',
-    highlights: [
-      { title: 'Shift templates', description: 'Define standard shift blocks for quick assignment.' },
-      { title: 'Capacity chart', description: 'See coverage vs. demand per day.' },
-      { title: 'Time-off approvals', description: 'Approve/deny requests inline.' },
+    key: 'manager.settlements',
+    route: '/manager/settlements',
+    title: 'Settlements & payouts',
+    description: 'Track sales, refunds, payroll, and vendor payouts.',
+    sections: [
+      summary('manager-settlement-stats', 'Today', [
+        { label: 'Sales', value: '£18.4k', delta: '+12% vs last Tue' },
+        { label: 'Refunds', value: '£340', delta: '2 exposures cut short' },
+        { label: 'Tips', value: '£610', delta: '+9%' },
+      ]),
+      dataTable('manager-settlement-table', 'Ledger', [
+        { label: 'Type', key: 'type' },
+        { label: 'Amount', key: 'amount', align: 'right' },
+        { label: 'Status', key: 'status' },
+      ], [
+        { type: 'Stripe payout', amount: '£14.2k', status: 'Initiated' },
+        { type: 'Klarna settlement', amount: '£2.1k', status: 'Pending' },
+        { type: 'Vendor – Lamps', amount: '£850', status: 'Scheduled' },
+      ]),
     ],
   }),
   createManagerPage({
-    key: 'manager.announcements',
-    route: '/manager/announcements',
-    title: 'Announcements',
-    description: 'Broadcast updates to cleaners with read receipts.',
-    highlights: [
-      { title: 'Audience targeting', description: 'Filter by team, zone, or role.' },
-      { title: 'Delivery channels', description: 'Push, SMS, email, or in-app banners.' },
-      { title: 'Acknowledgements', description: 'Track who confirmed reading critical notices.' },
+    key: 'manager.settings',
+    route: '/manager/settings',
+    title: 'Studio settings',
+    description: 'Policies, thresholds, notifications, and integrations.',
+    sections: [
+      actionGrid('manager-settings-actions', 'Configure', [
+        { label: 'Exposure policies', description: 'Define cooldown, minutes caps, consent intervals.', icon: 'bi-shield-lock' },
+        { label: 'Notifications', description: 'Who gets SMS vs push vs email for each event.', icon: 'bi-bell' },
+        { label: 'Integrations', description: 'Connect POS, payroll, marketing tools.', icon: 'bi-plug' },
+      ]),
+      insights('manager-settings-brand', 'Branding touches', [
+        { title: 'Playlists', description: 'Upload new curated sounds to the kiosks.' },
+        { title: 'Scent + lighting', description: 'Control DMX + diffuser scenes per session type.' },
+      ]),
     ],
   }),
-]
-
-const financePages = [
-  createManagerPage({
-    key: 'manager.refunds',
-    route: '/manager/refunds',
-    title: 'Refunds',
-    description: 'Create/view refunds within policy.',
-    highlights: [
-      { title: 'Policy guardrails', description: 'Warn when outside refund window or exceeding limits.' },
-      { title: 'Evidence attachments', description: 'Attach photos, notes, or support tickets.' },
-      { title: 'Stripe sync', description: 'Issue refunds via Stripe with audit trail.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.adjustments',
-    route: '/manager/adjustments',
-    title: 'Adjustments',
-    description: 'Credits/charges ledger.',
-    highlights: [
-      { title: 'Ledger view', description: 'See all manual credits/debits.' },
-      { title: 'Bulk adjustments', description: 'Apply to cohorts for promos.' },
-      { title: 'Audit-ready', description: 'Exportable ledger with user + reason codes.' },
-    ],
-  }),
-]
-
-const reportsPages = [
-  createManagerPage({
-    key: 'manager.reports.operations',
-    route: '/manager/reports/operations',
-    title: 'Ops report',
-    description: 'OTIF, lateness, completion rate, productivity.',
-    highlights: [
-      { title: 'OTIF widgets', description: 'Shows on-time-in-full for the period.' },
-      { title: 'Bottleneck analysis', description: 'Spot cleaners or zones causing delays.' },
-      { title: 'Export to CSV/Looker', description: 'Push metrics into BI tools.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.reports.quality',
-    route: '/manager/reports/quality',
-    title: 'Quality report',
-    description: 'CSAT, disputes, re-cleans, quality trends.',
-    highlights: [
-      { title: 'CSAT distribution', description: 'Charts by cleaner or customer.' },
-      { title: 'Dispute reasons', description: 'Breakdown by root cause.' },
-      { title: 'Re-clean tracker', description: 'Monitor repeat issues.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.reports.volume',
-    route: '/manager/reports/volume',
-    title: 'Volume report',
-    description: 'Jobs per area/weekday, booking mix.',
-    highlights: [
-      { title: 'Booking mix', description: 'Recurring vs. one-off share.' },
-      { title: 'Zone/weekday heatmap', description: 'Identify peaks to staff accordingly.' },
-      { title: 'Forecast export', description: 'Send to owners/accountants.' },
-    ],
-  }),
-]
-
-const settingsPages = [
-  createManagerPage({
-    key: 'manager.settings.policies',
-    route: '/manager/settings/policies',
-    title: 'Policies',
-    description: 'Cancellation, reschedule, service windows, surcharges.',
-    highlights: [
-      { title: 'Policy builder', description: 'Define windows per plan tier.' },
-      { title: 'Preview fees', description: 'Show customers what happens when they cancel late.' },
-      { title: 'Version control', description: 'Effective dates + approvals.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.settings.notifications',
-    route: '/manager/settings/notifications',
-    title: 'Notification templates',
-    description: 'Manage SMS/email pushes to customers & cleaners.',
-    highlights: [
-      { title: 'Template variables', description: 'Use {{job.window}}, {{customer.name}} etc.' },
-      { title: 'A/B testing', description: 'Test variants before roll-out.' },
-      { title: 'Channel fallback', description: 'Define SMS backup if push fails.' },
-    ],
-  }),
-  createManagerPage({
-    key: 'manager.settings.integrations',
-    route: '/manager/settings/integrations',
-    title: 'Integrations',
-    description: 'SMS/email providers, webhooks, Slack alerts.',
-    highlights: [
-      { title: 'Provider connections', description: 'Twilio, Mailgun, etc. with health checks.' },
-      { title: 'Webhook secret mgmt', description: 'Rotate secrets and view delivery logs.' },
-      { title: 'Sandbox keys', description: 'Test mode for QA.' },
-    ],
-  }),
-]
-
-const managerPages = [
-  ...dispatchPages,
-  ...jobPages,
-  ...livePages,
-  ...customerPages,
-  ...staffPages,
-  ...financePages,
-  ...reportsPages,
-  ...settingsPages,
 ]
 
 export function registerManagerPages() {

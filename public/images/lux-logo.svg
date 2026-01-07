@@ -1,0 +1,11 @@
+<svg width="172" height="44" viewBox="0 0 172 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lux Tanning">
+  <defs>
+    <linearGradient id="luxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFBE3D" />
+      <stop offset="50%" stop-color="#FF8C43" />
+      <stop offset="100%" stop-color="#FF4E68" />
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="170" height="42" rx="12" fill="#0C0714" stroke="url(#luxGradient)" stroke-width="2" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="url(#luxGradient)" font-family="'Space Grotesk', 'Poppins', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600">Lux Tanning</text>
+</svg>

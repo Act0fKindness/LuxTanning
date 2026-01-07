@@ -22,8 +22,8 @@ function createBanner({ id, message, buttonLabel, onConfirm, onDismiss }) {
 
   const banner = document.createElement('div');
   banner.id = id;
-  banner.classList.add('glint-pwa-banner');
-  banner.style.background = '#0B0C0F';
+  banner.classList.add('lux-pwa-banner');
+  banner.style.background = '#0C0714';
   banner.style.color = '#ffffff';
   banner.style.padding = '10px 16px';
   banner.style.display = 'flex';
@@ -52,8 +52,8 @@ function createBanner({ id, message, buttonLabel, onConfirm, onDismiss }) {
   const confirmBtn = document.createElement('button');
   confirmBtn.type = 'button';
   confirmBtn.textContent = buttonLabel;
-  confirmBtn.style.background = '#50E1C2';
-  confirmBtn.style.color = '#0B0C0F';
+  confirmBtn.style.background = 'linear-gradient(135deg,#ffbe3d,#ff4e68)';
+  confirmBtn.style.color = '#100612';
   confirmBtn.style.border = 'none';
   confirmBtn.style.borderRadius = '999px';
   confirmBtn.style.fontWeight = '700';
@@ -99,7 +99,7 @@ function insertBannerUnderNavbar(banner) {
 
 function updateBodyBannerOffset() {
   if (typeof document === 'undefined' || !document.body) return;
-  const banners = document.querySelectorAll('.glint-pwa-banner');
+  const banners = document.querySelectorAll('.lux-pwa-banner');
   if (!banners.length) {
     document.body.style.removeProperty('--banner-offset');
     return;
@@ -114,8 +114,8 @@ export function initPwaPrompts() {
 
   let deferredPrompt = null;
 
-  const PERMISSIONS_COOKIE = 'glint_permissions_banner_v2';
-  const PERMISSIONS_SESSION_KEY = 'glint_permissions_banner_session';
+  const PERMISSIONS_COOKIE = 'lux_permissions_banner_v1';
+  const PERMISSIONS_SESSION_KEY = 'lux_permissions_banner_session';
 
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
@@ -138,33 +138,33 @@ export function initPwaPrompts() {
   function maybeShowInstallBanner() {
     if (isStandalone()) return;
     if (!isMobileDevice()) return;
-    if (getCookie('glint_install_banner') === 'hidden') return;
+    if (getCookie('lux_install_banner') === 'hidden') return;
 
     const banner = createBanner({
-      id: 'glint-install-banner',
-      message: 'Install the Glint app on your phone for faster access.',
+      id: 'lux-install-banner',
+      message: 'Install the Lux app on your phone for faster access.',
       buttonLabel: 'Install',
       onConfirm: async bannerEl => {
         if (deferredPrompt) {
           deferredPrompt.prompt();
           const { outcome } = await deferredPrompt.userChoice;
           if (outcome === 'accepted') {
-            setCookie('glint_install_banner', 'installed');
+            setCookie('lux_install_banner', 'installed');
             deferredPrompt = null;
-            hideBanner('glint-install-banner');
+            hideBanner('lux-install-banner');
           } else {
-            setCookie('glint_install_banner', 'dismissed', 7);
-            hideBanner('glint-install-banner');
+            setCookie('lux_install_banner', 'dismissed', 7);
+            hideBanner('lux-install-banner');
           }
         } else {
           alert('Use your browser\'s Share or More menu and choose "Add to Home Screen" to install.');
-          setCookie('glint_install_banner', 'dismissed', 3);
-          hideBanner('glint-install-banner');
+          setCookie('lux_install_banner', 'dismissed', 3);
+          hideBanner('lux-install-banner');
         }
       },
       onDismiss: () => {
-        setCookie('glint_install_banner', 'hidden', 7);
-        hideBanner('glint-install-banner');
+        setCookie('lux_install_banner', 'hidden', 7);
+        hideBanner('lux-install-banner');
       }
     });
     insertBannerUnderNavbar(banner);
@@ -185,7 +185,7 @@ export function initPwaPrompts() {
     const message = buildPermissionMessage(needs);
 
     const banner = createBanner({
-      id: 'glint-permissions-banner',
+      id: 'lux-permissions-banner',
       message,
       buttonLabel: 'Enable',
       onConfirm: async () => {
@@ -194,7 +194,7 @@ export function initPwaPrompts() {
             try {
               await Notification.requestPermission();
             } catch (error) {
-              console.warn('[Glint] Notification permission error', error);
+              console.warn('[Lux] Notification permission error', error);
             }
           }
 
@@ -203,14 +203,14 @@ export function initPwaPrompts() {
           }
         } finally {
           setCookie(PERMISSIONS_COOKIE, 'handled');
-          hideBanner('glint-permissions-banner');
+          hideBanner('lux-permissions-banner');
         }
       },
       onDismiss: () => {
         try {
           sessionStorage?.setItem(PERMISSIONS_SESSION_KEY, 'dismissed');
         } catch (error) {}
-        hideBanner('glint-permissions-banner');
+        hideBanner('lux-permissions-banner');
       }
     });
 
